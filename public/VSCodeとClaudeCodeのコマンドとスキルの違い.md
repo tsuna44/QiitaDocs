@@ -1,14 +1,14 @@
 ---
 title: GitHub Copilot と Claude Code のプロンプト・スキル・エージェント機能の比較（2026年5月版）
 tags:
-  - 'GitHubCopilot'
-  - 'ClaudeCode'
-  - 'AI'
-  - 'VSCode'
-  - 'LLM'
+  - AI
+  - VSCode
+  - GitHubCopilot
+  - LLM
+  - ClaudeCode
 private: false
-updated_at: ''
-id: null
+updated_at: '2026-05-24T12:07:38+09:00'
+id: c320df90b4cf655ce3f6
 organization_url_name: null
 slide: false
 ignorePublish: false
