@@ -32,6 +32,9 @@ ignorePublish: false
 - **[AI に自分の回答を疑わせる `/criticalthink` コマンドを作ってみた](https://aba.hatenablog.com/entry/2025/10/08/201243)**  
   AIに批判的思考を促すカスタムコマンド実装例。
 
+- **[無料で自分のPCで動かせるローカルAIモデルがわかる「LLM Checker](https://gigazine.net/news/20260606-llm-checker/)**
+
+
 ## スラッシュコマンドやSkillsなどの作り方
 
 - **[【GitHub Copilot講座】スラッシュコマンドを使ってみよう](https://pikawaka.com/curriculums/github-copilot/how-to-use-slash-commands-github-copilot)**  
@@ -215,6 +218,15 @@ ignorePublish: false
 
 - **[AI 駆動開発の全体像#3 問題は「真ん中」にある](https://cloud-ace-recruit.com/n/n98782a1d8c73?external_position=original_link&external_type=smart_news&rt=external&sub_rt=smart_news)**  
   AI駆動開発シリーズ完結編。プロセスの中盤にある実装課題。
+
+- **[Claude Codeで作業効率が変わる人・変わらない人の違い](https://note.com/fit_dog9327/n/nc3bbd1547d39?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)**  
+
+- **[コードレビュー、AIに"チーム"でやらせたら想像以上に良かった](https://note.com/nyle_engineer/n/nd9aa4c5f2825?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)**  
+早速、試してみようと思いました。
+
+- **[「AIで効率化」なんて言葉、正直もう聞き飽きましたよね。現場で独り、AIと格闘して見えた「泥臭い」生存戦略。](https://note.com/usefulsmile55/n/n8cc883de1e15?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)**
+
+- **[12,000人を1年追跡した研究が示す——「AIの使い方の格差は、時間が経つほど広がる」](https://note.com/samurai_ai/n/n14e7de2dc9e3?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)**
 
 # 気をつけたい事例
 - [生成AIの「後始末」に追われるプロたち。そのコスト、一体誰が払うのか？](https://note.com/kurihara_y_dyla/n/nc1df6a06cabb?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)
