@@ -34,7 +34,12 @@ ignorePublish: false
 
 - **[無料で自分のPCで動かせるローカルAIモデルがわかる「LLM Checker](https://gigazine.net/news/20260606-llm-checker/)**
 
+- **[ChatGPTを“おだて役”から“辛口参謀”に変える！ SNSで話題の「神プロンプト」10選](https://www.smartwatchlife.jp/59850/)**
 
+- **[【入門記事】ClaudeCodeの中級者になりたい人は集合してください](https://qiita.com/K5K/items/72cc4282819ace823524?mc_cid=efbfc7b0b9&mc_eid=76fb3147c5)**
+
+- **[簡単コピペでClaude Codeに144種類のエージェントチームを作成 ── agency-agentsという40Kスター超のAIエージェント集を使いこなす](https://qiita.com/nogataka/items/5b5747f619e6eb745436?mc_cid=efbfc7b0b9&mc_eid=76fb3147c5)**
+  
 ## スラッシュコマンドやSkillsなどの作り方
 
 - **[【GitHub Copilot講座】スラッシュコマンドを使ってみよう](https://pikawaka.com/curriculums/github-copilot/how-to-use-slash-commands-github-copilot)**  
@@ -126,6 +131,12 @@ ignorePublish: false
 
 - **[コンテキストウィンドウの罠｜LLMの構造的弱点「Lost in the Middle」と「Context Rot」を整理する](https://qiita.com/ktdatascience/items/c134a55e2246a52a34b7)
 
+# RAG
+- [【超図解】RAGを「9人の社員がいる普通のオフィス」に例えたら、技術書を100冊読むより構造が理解できた話。——エンジニアの専門用語が"翻訳"できる「脳内地図」【第1章：全体像編】](https://note.com/sinyss/n/n335bfd700bb9?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)
+
+# XDDP
+- [USDM要求仕様書をMarkdownで書いてExcelを生成するツール「md2usdm」を作った](https://zenn.dev/tasuku/articles/970f5919bf8943)
+
 # 生成AIの安全性確保
 - **[ハーネスエンジニアリングとは一体何なのか。](https://newspicks.com/news/16607103/body/)**  
 「ハーネスエンジニアリング」と言っている人に、「どこの層のことを指してらっしゃいますか？」と、言いたくなっちゃいました。
@@ -178,6 +189,8 @@ ignorePublish: false
 - **[仕様駆動開発ツールcc-sddを実務で使ってみた](https://tech.every.tv/entry/2025/10/10/124649)**  
   cc-sddの実務導入レポート。実際の運用経験に基づく知見。
 
+- **[実務で使い倒したので cc-sdd の仕様駆動開発プロセスを丁寧に解説してみた](https://zenn.dev/tmasuyama1114/articles/cc_sdd_whole_flow)**
+
 - **[コーディング変革！「仕様駆動開発（SDD）」の手引き](https://forest.watch.impress.co.jp/docs/serial/aidev/2071380.html)**  
   SDD全体の手引き。基本から応用まで段階的に学べる。
 
@@ -186,10 +199,6 @@ ignorePublish: false
 
 - **[Claude Codeで実践する仕様(スペック)駆動開発入門](https://yoshidashingo.com/entry/sdd-with-claude_code)**  
   Claude Code利用者向けSDD入門。実装例を示した初級向け解説。
-
-
-- **[AIコーディング(AI駆動開発) なぜ思い通りにならないのか](https://cobrain.jp/spec-driven-development/?utm_medium=email&_hsenc=p2ANqtz--tg1f4cuJ8TaBYCZIoXKFt9rnjw_Yr-W4021VQOLIIghYKEJki8hz9MpHj2apcgdlHQaOYyZOXgVstsnnGhsA9yg8JBA&_hsmi=30130473&utm_content=30130473&utm_source=hs_email)**  
-ソフトウェア開発、人がやろうと、AIがやろうと仕様の明確化・詳細化が大切ですよね。
 
 ## バイブコーディング
 
@@ -224,10 +233,6 @@ ignorePublish: false
 - **[コードレビュー、AIに"チーム"でやらせたら想像以上に良かった](https://note.com/nyle_engineer/n/nd9aa4c5f2825?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)**  
 早速、試してみようと思いました。
 
-- **[「AIで効率化」なんて言葉、正直もう聞き飽きましたよね。現場で独り、AIと格闘して見えた「泥臭い」生存戦略。](https://note.com/usefulsmile55/n/n8cc883de1e15?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)**
-
-- **[12,000人を1年追跡した研究が示す——「AIの使い方の格差は、時間が経つほど広がる」](https://note.com/samurai_ai/n/n14e7de2dc9e3?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)**
-
 # 気をつけたい事例
 - [生成AIの「後始末」に追われるプロたち。そのコスト、一体誰が払うのか？](https://note.com/kurihara_y_dyla/n/nc1df6a06cabb?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)
 
@@ -240,7 +245,8 @@ ignorePublish: false
 - [AIで週1～7時間の業務を削減--AIが生成した成果物の修正や検証に週1～4時間](https://japan.zdnet.com/article/35243791/)  
 生成AIの成果物の現実ってこうですよね。でも、自分で１から作るより、全然効率いいんですけど。
 
-- [Rubyの父 まつもとゆきひろさんが示す、AI時代の若いエンジニアに必要な“4つのスキル”](https://atmarkit.itmedia.co.jp/ait/articles/2511/13/news001.html)
+- [Rubyの父 まつもとゆきひろさんが示す、AI時代の若いエンジニアに必要な“4つのスキル”](https://atmarkit.itmedia.co.jp/ait/articles/2511/13/news001.html)  
+『AIは間違えるんですよ』。。。ですよね。
 
 - [AIシステムはどのように失敗するのかをAnthropicが解説](https://gigazine.net/news/20260203-mess-ai/)
 
@@ -270,6 +276,28 @@ ignorePublish: false
 - [新人｢できました｣→提出物のエラー800件以上…"修正不能なゴミ"を量産する令和の新人に上司が絶句するワケ](https://toyokeizai.net/articles/-/945161?display=b)  
 新人さんに限らない話ではありますが。
 
+# 生成AI適用時のポイント
+
+- [なぜAI活用は「空回り」で終わる？ガートナーが伝授、能力を引き出す“3つの秘策”](https://www.sbbit.jp/article/cont1/183063)
+
+- [AIが“欲しいコード”を生成してくれる確率は1割以下？　“ガチャ要素”から逃れられない状況下での適切な使い方 [1/2]](https://logmi.jp/main/career/332729)
+
+- [生成AIは意外とサボる？　エンジニアが語るAIの苦手な作業・得意な作業の例](https://logmi.jp/main/technology/332726)
+
+- [設計書にソースコードを書く、参考リンクを無視…　AIの“サボり開発”を防ぐためにエンジニアが持つべき視点](https://logmi.jp/main/technology/332727)
+-　[AIリテラシーの本質は「疑う力」だ。Anthropicの1万件調査が突きつけた現代人への警告](https://ichioshi.smt.docomo.ne.jp/articles/news/76623) 
+- [AIで効率化のはずが“1人デスマーチ状態”に　開発現場にはびこる“サボるAI問題”](https://logmi.jp/main/technology/332728)
+- [AIにコードを書かせまくると検査コストが爆発すると専門家が指摘、生成量を減らす考え方が重要](https://gigazine.net/news/20260529-ai-code-generation/)
+- [AIで成果が出る人はたった2%—残り98%との決定的な差](https://note.com/mugimugi92/n/nbf64a8561c0d?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)
+
+- **[「AIで効率化」なんて言葉、正直もう聞き飽きましたよね。現場で独り、AIと格闘して見えた「泥臭い」生存戦略。](https://note.com/usefulsmile55/n/n8cc883de1e15?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)**
+
+- **[12,000人を1年追跡した研究が示す——「AIの使い方の格差は、時間が経つほど広がる」](https://note.com/samurai_ai/n/n14e7de2dc9e3?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)**
+
+- **[ChatGPTがハルシネーションを起こす理由と「3つの防ぐ方法」](https://forbesjapan.com/articles/detail/85720)**
+
+- **[AIコーディング(AI駆動開発) なぜ思い通りにならないのか](https://cobrain.jp/spec-driven-development/?utm_medium=email&_hsenc=p2ANqtz--tg1f4cuJ8TaBYCZIoXKFt9rnjw_Yr-W4021VQOLIIghYKEJki8hz9MpHj2apcgdlHQaOYyZOXgVstsnnGhsA9yg8JBA&_hsmi=30130473&utm_content=30130473&utm_source=hs_email)**  
+ソフトウェア開発、人がやろうと、AIがやろうと仕様の明確化・詳細化が大切ですよね。
 
 # 生成AI学習
 - [AI Learning Essentials](https://www.nvidia.com/ja-jp/learn/ai-learning-essentials/)  
