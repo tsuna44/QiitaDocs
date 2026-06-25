@@ -81,13 +81,16 @@ ignorePublish: false
 
 - [プロンプト力なんて新しくない](https://note.com/kingcony/n/n27c04a47b17e?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)
 
-- [ぜAIは「期待通り」に動いてくれないのか？‐プロンプトの書き方の前に押さえるべき構造と設計‐](https://note.com/taniguchi_newh/n/n5f9806f1461c?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)
+- [なぜAIは「期待通り」に動いてくれないのか？‐プロンプトの書き方の前に押さえるべき構造と設計‐](https://note.com/taniguchi_newh/n/n5f9806f1461c?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)
+
+- [あなたのAIは、なぜ思いどおりに動かないのか？――エンジニアと普通の人を分ける「言語化の壁」](https://note.com/si_mosu/n/nf884995369c2?rt=email&sub_rt=daily_report_followee_notes_card_1&position=1)
 
 - [「人に任せると質が落ちる」と嘆く40代へ。AIに「誰がやっても同じ結果になるマニュアル」を作らせる。【コピペOK】](https://note.com/40challenge_/n/nc9b57dfbe541?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)
 
 - [南陽市の一発OK!! 市民も使える！生成AI活用実例集（プロンプト集）](http://www.city.nanyo.yamagata.jp/dxchosei/5793#MENU6)
 
-- [プロンプトに「原則」があると気づくまで3ヶ月かかった話](https://note.com/furebito/n/nfcd7d04a482b?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)  
+- [プロンプトに「原則」があると気づくまで3ヶ月かかった話](https://note.com/furebito/n/nfcd7d04a482b?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news) 
+-  **[「あなたはプロの編集者です」と書いてもAIは賢くならない――2410問で判明した本当の使い方](https://note.com/si_mosu/n/n26afc6188896?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)**
 
 
 # skills
@@ -129,7 +132,10 @@ ignorePublish: false
 - **[AIの裏側にある「遅効性の毒」：コンテキスト汚染のメカニズム](https://qiita.com/s-age/items/7c902b5eeaed453f0fb3)**  
   不適切なコンテキストが与える長期的な悪影響を詳細解説。
 
-- **[コンテキストウィンドウの罠｜LLMの構造的弱点「Lost in the Middle」と「Context Rot」を整理する](https://qiita.com/ktdatascience/items/c134a55e2246a52a34b7)
+- **[コンテキストウィンドウの罠｜LLMの構造的弱点「Lost in the Middle」と「Context Rot」を整理する](https://qiita.com/ktdatascience/items/c134a55e2246a52a34b7)**
+
+- **[ナレッジグラフでClaude Codeのトークン消費を最大49倍削減する方法](https://qiita.com/nogataka/items/d63c09cb6226913e806d)**
+
 
 # RAG
 - [【超図解】RAGを「9人の社員がいる普通のオフィス」に例えたら、技術書を100冊読むより構造が理解できた話。——エンジニアの専門用語が"翻訳"できる「脳内地図」【第1章：全体像編】](https://note.com/sinyss/n/n335bfd700bb9?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)
@@ -276,6 +282,8 @@ ignorePublish: false
 - [新人｢できました｣→提出物のエラー800件以上…"修正不能なゴミ"を量産する令和の新人に上司が絶句するワケ](https://toyokeizai.net/articles/-/945161?display=b)  
 新人さんに限らない話ではありますが。
 
+- [AIで仕事は本当に速くなったのか?測ったら衝撃の結果だった――5つの研究で見る「体感はアテにならない」問題](https://note.com/si_mosu/n/n4cb506e331d3?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)
+- 
 # 生成AI適用時のポイント
 
 - [なぜAI活用は「空回り」で終わる？ガートナーが伝授、能力を引き出す“3つの秘策”](https://www.sbbit.jp/article/cont1/183063)
@@ -298,6 +306,9 @@ ignorePublish: false
 
 - **[AIコーディング(AI駆動開発) なぜ思い通りにならないのか](https://cobrain.jp/spec-driven-development/?utm_medium=email&_hsenc=p2ANqtz--tg1f4cuJ8TaBYCZIoXKFt9rnjw_Yr-W4021VQOLIIghYKEJki8hz9MpHj2apcgdlHQaOYyZOXgVstsnnGhsA9yg8JBA&_hsmi=30130473&utm_content=30130473&utm_source=hs_email)**  
 ソフトウェア開発、人がやろうと、AIがやろうと仕様の明確化・詳細化が大切ですよね。
+
+- **[アンソロピックがClaude Codeの40万件分析を公開、成果を左右する「AI活用の条件」](https://www.sbbit.jp/article/cont1/185797)**
+- **[「AIでどん底に突き落とされた」米マイクロソフト現役エンジニア・牛尾剛が〈生産性10倍〉に大逆転できた理由](https://bunshun.jp/articles/-/89029)**
 
 # 生成AI学習
 - [AI Learning Essentials](https://www.nvidia.com/ja-jp/learn/ai-learning-essentials/)  
