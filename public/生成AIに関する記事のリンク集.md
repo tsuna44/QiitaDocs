@@ -92,6 +92,7 @@ ignorePublish: false
 - [プロンプトに「原則」があると気づくまで3ヶ月かかった話](https://note.com/furebito/n/nfcd7d04a482b?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news) 
 -  **[「あなたはプロの編集者です」と書いてもAIは賢くならない――2410問で判明した本当の使い方](https://note.com/si_mosu/n/n26afc6188896?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)**
 
+- [プロンプトを手で書くのは、もう時代遅れ。AIがAIを作る「ダイナミックワークフロー」の話](https://note.com/novel_lotus3651/n/n8b4ce1d64ed6?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)
 
 # skills
 
@@ -136,6 +137,7 @@ ignorePublish: false
 
 - **[ナレッジグラフでClaude Codeのトークン消費を最大49倍削減する方法](https://qiita.com/nogataka/items/d63c09cb6226913e806d)**
 
+- **[あなたはAIを「疲弊させている」かもしれない　「トークン死」を防ぐコスト管理術](https://www.itmedia.co.jp/business/articles/2607/10/news023.html)**
 
 # RAG
 - [【超図解】RAGを「9人の社員がいる普通のオフィス」に例えたら、技術書を100冊読むより構造が理解できた話。——エンジニアの専門用語が"翻訳"できる「脳内地図」【第1章：全体像編】](https://note.com/sinyss/n/n335bfd700bb9?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)
@@ -148,6 +150,8 @@ ignorePublish: false
 「ハーネスエンジニアリング」と言っている人に、「どこの層のことを指してらっしゃいますか？」と、言いたくなっちゃいました。
 
 - **[クソバズワード「ハーネスエンジニアリング」と向き合う](https://qiita.com/retore/items/3688cf515c14f7471ed4?utm_source=Qiita+ニュース&utm_campaign=005d991fbf-Qiita_newsletter_720_04_29_2026&utm_medium=email&utm_term=0_e44feaa081-005d991fbf-44971746&mc_cid=005d991fbf&mc_eid=76fb3147c5)**  
+
+- **[AIの安定出力に欠かせない？今注目「ハーネスエンジニアリング」が成果を生み出すワケ](https://www.sbbit.jp/article/cont1/185881)**
 
 - [「AIに絶対触らせてはいけない5つの領域」AIに仕事を任せすぎて痛い目を見た話と、そこから作ったルール](https://note.com/sabatora_/n/n903807900e9f?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)
 
@@ -309,6 +313,15 @@ ignorePublish: false
 
 - **[アンソロピックがClaude Codeの40万件分析を公開、成果を左右する「AI活用の条件」](https://www.sbbit.jp/article/cont1/185797)**
 - **[「AIでどん底に突き落とされた」米マイクロソフト現役エンジニア・牛尾剛が〈生産性10倍〉に大逆転できた理由](https://bunshun.jp/articles/-/89029)**
+
+- **[一発で当てるな、回して当てろ ― VSCode×Copilotで学ぶループエンジニアリング入門](https://note.com/just_mimosa3473/n/n6733a2e25937?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)**  
+ループエンジニアリング新しい言葉に思えますが、「実はやってることありました」という感じです。
+
+- **[AIエージェントに“任せられる業務”の正体 ― 「自動化できるか」は、間違った問いだった](https://note.com/witty_worm3902/n/n58218a31e114?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)**  
+適材適所というところでしょうか。ルールベースの既存ツールとは考え方が違いますよね。
+
+
+
 
 # 生成AI学習
 - [AI Learning Essentials](https://www.nvidia.com/ja-jp/learn/ai-learning-essentials/)  
