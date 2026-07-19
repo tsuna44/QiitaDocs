@@ -328,6 +328,8 @@ Claude Code だけでなく、生成AIを利用する時の基本。
 - **[AI時代の「無知の知」──「青信号で止まるAI」を作らないために](https://forest.watch.impress.co.jp/docs/serial/aistream/2125391.html)**  
 『長年業界で戦ってきたプロフェッショナルが陥りがちな『そもそもを忘れる病』です。』という言葉、刺さりました。
 
+- **[プロンプトを手で書くのは、もう時代遅れ。AIがAIを作る「ダイナミックワークフロー」の話](https://note.com/novel_lotus3651/n/n8b4ce1d64ed6?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)**  
+『確実に同じ結果がほしい作業はスクリプト寄りに、柔軟さがほしい作業はエージェント寄りに』という言葉、今、開発してる「生成AI支援でのXDDPツール」で生成AIさんからも言われました。ついつい、モリモリで生成AIさんに任せようとしちゃうんですよね。反省。
 
 # 生成AI学習
 - [AI Learning Essentials](https://www.nvidia.com/ja-jp/learn/ai-learning-essentials/)  
