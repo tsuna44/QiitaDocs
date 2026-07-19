@@ -322,7 +322,11 @@ agreed_posting_campaign_term: false
 - **[AIエージェントに“任せられる業務”の正体 ― 「自動化できるか」は、間違った問いだった](https://note.com/witty_worm3902/n/n58218a31e114?external_type=smart_news&external_position=original_link&rt=external&sub_rt=smart_news)**  
 適材適所というところでしょうか。ルールベースの既存ツールとは考え方が違いますよね。
 
+- **[正直に言う。お前のClaude Codeの使い方は間違っている](https://qiita.com/tehito/items/356e5f1dba112a075be1?utm_source=Qiita+ニュース&utm_campaign=43c77f69cb-Qiita_newsletter_729_07_01_2026&utm_medium=email&utm_term=0_e44feaa081-43c77f69cb-49320521)**  
+Claude Code だけでなく、生成AIを利用する時の基本。
 
+- **[AI時代の「無知の知」──「青信号で止まるAI」を作らないために](https://forest.watch.impress.co.jp/docs/serial/aistream/2125391.html)**  
+『長年業界で戦ってきたプロフェッショナルが陥りがちな『そもそもを忘れる病』です。』という言葉、刺さりました。
 
 
 # 生成AI学習
