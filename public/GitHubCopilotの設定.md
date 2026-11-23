@@ -1,5 +1,7 @@
 ---
-title: GitHub Copilot の「AIへの指示書」まとめ：copilot-instructions.md / Skills / AGENTS.md / カスタムエージェント（VS Code / Copilot CLI）
+title: >-
+  GitHub Copilot の「AIへの指示書」まとめ：copilot-instructions.md / Skills / AGENTS.md /
+  カスタムエージェント（VS Code / Copilot CLI）
 tags:
   - VSCode
   - GitHubCopilot
@@ -7,8 +9,8 @@ tags:
   - AI
   - LLM
 private: false
-updated_at: ''
-id: null
+updated_at: '2026-11-23T19:15:17+09:00'
+id: aa0b87bdf13e2219d6c1
 organization_url_name: null
 slide: false
 ignorePublish: false
