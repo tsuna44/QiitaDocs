@@ -42,7 +42,7 @@ Claude Code を中心に説明し、各節の最後に「GitHub Copilot では�
 
 | やること | 理由 |
 |---|---|
-| 無関係な作業に移るときは `/clear`（新しいチャット） | 古い履歴は、以降の**すべてのリクエストで送り直される** |
+| 無関係な作業に移るときは `/clear`（新しいチャット） | 過去のチャット内容も、**すべてのリクエストで送り直される** |
 | 作業の途中でモデルを切り替えない（effort・fast mode なども、条件によって同じ） | キャッシュが無効になり、履歴全体を書き込み直す（2節） |
 | 5分以上（設定によっては1時間以上）離れる前に区切りをつける | 期限が切れると履歴全体をキャッシュ書き込み（入力の1.25倍）し直すので、キャッシュを使わない場合（1倍）より**高く**なる（3節） |
 | 1時間TTL は、5〜60分の中断が多いときだけ使う | 書き込みが入力の2倍なので、キャッシュなしより安くなるのは、同じ履歴が2回読まれてから（3節） |
@@ -190,10 +190,8 @@ Opus 5.5 などのモデルは、回答の前に**思考（thinking）**を生�
 └────────────────────────────────────────────┘
 ```
 
-- 思考は、リクエストごとに生成されることがあります（どれだけ考えるかはモデルが判断します）。上のシーケンス図では、3回のリクエストのそれぞれで思考が出力になりえます。
+- 思考は、リクエストごとに生成されることがあります。上のシーケンス図では、3回のリクエストのそれぞれで思考が出力になりえます。
 - Claude Code のドキュメントには、思考の既定の予算が「モデルによっては1リクエストあたり数万トークンになりうる（the default budget can be tens of thousands of tokens per request depending on the model）」とあります（[Manage costs effectively](https://code.claude.com/docs/en/costs)）。
-- 手動の思考予算（`budget_tokens`）について説明した [Extended thinking](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) のページには、思考に使ったトークン数を API の応答の `usage.output_tokens_details.thinking_tokens` で確認できるとあります。Opus 5.5 などの adaptive thinking でも同じフィールドで確認できるかは、確認できていません。
-  Claude Code では、作業中にスピナーの横に出るトークン数に思考も含まれます（[Manage costs effectively](https://code.claude.com/docs/en/costs)）。
 
 ### 1回目のコスト
 
@@ -440,7 +438,14 @@ TTL を過ぎてから次のプロンプトを送ると、キャッシュに読�
 
 ### GitHub Copilot では
 
-- キャッシュの有効期限は「使わない状態が続くと切れる。OpenAI のモデルは24時間、それ以外のほとんどは1時間」とされています（"Caches expire after a period of inactivity (24 hours for OpenAI models and 1 hour for most others)."、[Optimizing your AI usage to maximize efficiency and reduce cost](https://docs.github.com/en/copilot/tutorials/optimize-ai-usage)）。
+- キャッシュの有効期限は「使わない状態が続くと切れる」とされています（"Caches expire after a period of inactivity (24 hours for OpenAI models and 1 hour for most others)."、[Optimizing your AI usage to maximize efficiency and reduce cost](https://docs.github.com/en/copilot/tutorials/optimize-ai-usage)）。
+モデルごとのキャッシュ有効期間は下記の通りです。
+
+| モデル | キャッシュ有効期間 |
+|---|---|
+| OpenAI | 24時間 |
+| OpenAI以外 | 1時間 |
+
 - 期限が切れた古いセッションに戻ると、キャッシュは作り直しになります。Copilot CLI では `/compact` で履歴を要約してから作り直すと、作り直す量が小さくなります（同ページ）。
 
 ---
