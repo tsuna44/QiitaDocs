@@ -20,7 +20,8 @@ agreed_posting_campaign_term: false
 
 ## はじめに
 
-Claude Code や GitHub Copilot のエージェントを使っていると、「短い質問をしただけなのに、思ったより使用量が増えている」と感じることがあります。Claude Code のドキュメントは、長いセッションで使用量が増える理由として、**会話全体が毎回送られること（長いコンテキスト）**と、**キャッシュの期限切れ（キャッシュミス）**などを挙げています（[Manage costs effectively](https://code.claude.com/docs/en/costs) の "Why usage climbs in a long session"）。
+Claude Code や GitHub Copilot のエージェントを使っていると、「短い質問をしただけなのに、思ったより使用量が増えている」と感じることがあります。
+Claude Code のドキュメントは、長いセッションで使用量が増える理由として、**会話全体が毎回送られること（長いコンテキスト）**と、**キャッシュの期限切れ（キャッシュミス）**などを挙げています（[Manage costs effectively](https://code.claude.com/docs/en/costs) の "Why usage climbs in a long session"）。
 
 この記事では、次の6つを順に説明します。
 
@@ -44,6 +45,7 @@ Claude Code を中心に説明し、各節の最後に「GitHub Copilot では�
 | 無関係な作業に移るときは `/clear`（新しいチャット） | 古い履歴は、以降の**すべてのリクエストで送り直される** |
 | 作業の途中でモデルを切り替えない（effort・fast mode なども、条件によって同じ） | キャッシュが無効になり、履歴全体を書き込み直す（2節） |
 | 5分以上（設定によっては1時間以上）離れる前に区切りをつける | 期限が切れると履歴全体をキャッシュ書き込み（入力の1.25倍）し直すので、キャッシュを使わない場合（1倍）より**高く**なる（3節） |
+| 1時間TTL は、5〜60分の中断が多いときだけ使う | 書き込みが入力の2倍なので、キャッシュなしより安くなるのは、同じ履歴が2回読まれてから（3節） |
 | 大量のログ読みや調査はサブエージェントに任せる | メインの会話に残るのは要約だけになる |
 | 重要な指示は先頭（CLAUDE.md）か末尾（最新のプロンプト）に置く | 2023年の研究で、長い入力の中ほどにある情報を使う性能が大きく下がることが報告されている（5節） |
 | 作業の状態は会話ではなくファイルに書く | 中断・`/clear`・コンパクションの後も再開できる |
@@ -54,12 +56,14 @@ Claude Code を中心に説明し、各節の最後に「GitHub Copilot では�
 
 ## 0. 前提知識：LLM は会話を覚えていない
 
-LLM の API はステートレスです。**モデルはリクエストとリクエストの間で何も覚えていません。** 会話が続いているように見えるのは、クライアント（Claude Code や Copilot）が**毎回、それまでの会話をまるごと送り直している**からです。
+LLM の API はステートレスです。**モデルはリクエストとリクエストの間で何も覚えていません。**
+会話が続いているように見えるのは、クライアント（Claude Code や Copilot）が**毎回、それまでの会話をまるごと送り直している**からです。
 
 > Each time you send a message in Claude Code, it makes a new API request. The model doesn't remember anything between requests, so Claude Code re-sends the full context: the system prompt, your project context, every prior message and tool result, and your new message.
 > （[How Claude Code uses prompt caching](https://code.claude.com/docs/en/prompt-caching.md)）
 
-そのため、会話が長くなるほど1回のリクエストで送るトークンは増えていきます。これを安くする仕組みが**プロンプトキャッシュ**です。
+そのため、会話が長くなるほど1回のリクエストで送るトークンは増えていきます。
+これを安くする仕組みが**プロンプトキャッシュ**です。
 
 ### トークンの種類と価格（Claude Opus 5.5）
 
@@ -102,7 +106,8 @@ Claude Code は、変わりにくいものから順に並べてリクエスト�
 └──────────────────────────────────────────────┘
 ```
 
-あなたが打った1行の前に、**これだけのものが毎回付きます。** それぞれ何トークン使っているかは `/context` で確認できます。
+あなたが打った1行の前に、**これだけのものが毎回付きます。**
+それぞれ何トークン使っているかは `/context` で確認できます。
 
 ### 1回のプロンプトは1回のリクエストとは限らない
 
@@ -171,7 +176,8 @@ sequenceDiagram
 
 ### 応答には思考（reasoning）も含まれる
 
-モデルの応答は、画面に出る回答だけではありません。Opus 5.5 などのモデルは、回答の前に**思考（thinking）**を生成します。Opus 5.5 では思考を止めることはできず、effort（思考の深さ）で量を調整します（[Manage costs effectively](https://code.claude.com/docs/en/costs)）。
+モデルの応答は、画面に出る回答だけではありません。
+Opus 5.5 などのモデルは、回答の前に**思考（thinking）**を生成します。Opus 5.5 では思考を止めることはできず、effort（思考の深さ）で量を調整します（[Manage costs effectively](https://code.claude.com/docs/en/costs)）。
 
 ```
 応答（すべて「出力」として課金。入力の5倍の価格）
@@ -186,11 +192,13 @@ sequenceDiagram
 
 - 思考は、リクエストごとに生成されることがあります（どれだけ考えるかはモデルが判断します）。上のシーケンス図では、3回のリクエストのそれぞれで思考が出力になりえます。
 - Claude Code のドキュメントには、思考の既定の予算が「モデルによっては1リクエストあたり数万トークンになりうる（the default budget can be tens of thousands of tokens per request depending on the model）」とあります（[Manage costs effectively](https://code.claude.com/docs/en/costs)）。
-- 手動の思考予算（`budget_tokens`）について説明した [Extended thinking](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) のページには、思考に使ったトークン数を API の応答の `usage.output_tokens_details.thinking_tokens` で確認できるとあります。Opus 5.5 などの adaptive thinking でも同じフィールドで確認できるかは、確認できていません。Claude Code では、作業中にスピナーの横に出るトークン数に思考も含まれます（[Manage costs effectively](https://code.claude.com/docs/en/costs)）。
+- 手動の思考予算（`budget_tokens`）について説明した [Extended thinking](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) のページには、思考に使ったトークン数を API の応答の `usage.output_tokens_details.thinking_tokens` で確認できるとあります。Opus 5.5 などの adaptive thinking でも同じフィールドで確認できるかは、確認できていません。
+  Claude Code では、作業中にスピナーの横に出るトークン数に思考も含まれます（[Manage costs effectively](https://code.claude.com/docs/en/costs)）。
 
 ### 1回目のコスト
 
-1回目は、まだキャッシュがありません。前置きを含む入力全体を**キャッシュに書き込む**ため、入力は1.25倍（5分TTL）の価格になります。これは「2回目以降に安く読むための先行投資」です。
+1回目は、まだキャッシュがありません。
+前置きを含む入力全体を**キャッシュに書き込む**ため、入力は1.25倍（5分TTL）の価格になります。これは「2回目以降に安く読むための先行投資」です。
 
 これに加えて、**思考を含む応答全体**が出力（入力の5倍の価格）として課金されます。
 
@@ -241,7 +249,8 @@ sequenceDiagram
 
 ### 図の「応答」には思考も含まれる
 
-図の「応答1」「応答2」には、回答のテキストだけでなく**思考（thinking）も含まれます**。つまり、思考は次のように2回課金されます。
+図の「応答1」「応答2」には、回答のテキストだけでなく**思考（thinking）も含まれます**。
+つまり、思考は次のように2回課金されます。
 
 1. 生成したターンで、**出力**として（入力の5倍の価格）
 2. 次のターン以降、会話の履歴の一部として、**入力**として（キャッシュが有効ならキャッシュ読み込み 0.05倍、期限切れならキャッシュ書き込み 1.25倍）
@@ -279,14 +288,16 @@ Opus 5.5 などを使う場合、**思考は会話の履歴として積み上が
 
 #### 思考が多い場合
 
-同じ条件で、思考が1ターンあたり9,000トークン多い場合を比べます。出力は1ターン10,000トークンになり、その分、次のターンで増える入力も14,000トークンになります。
+同じ条件で、思考が1ターンあたり9,000トークン多い場合を比べます。
+出力は1ターン10,000トークンになり、その分、次のターンで増える入力も14,000トークンになります。
 
 | 条件 | 1ターンの出力 | 10ターン目に送る入力 | 10ターン合計 |
 |---|---|---|---|
 | 上の試算 | 1,000 | 70,000 | $0.631 |
 | 思考が多い場合 | 10,000 | 151,000 | $2.901 |
 
-約4.6倍です。増えた分のほとんどは出力の料金（入力の5倍の価格）ですが、コンテキストも2倍以上に膨らみます。簡単な作業では effort を下げると、思考の量を減らせます（4節）。
+約4.6倍です。増えた分のほとんどは出力の料金（入力の5倍の価格）ですが、コンテキストも2倍以上に膨らみます。
+簡単な作業では effort を下げると、思考の量を減らせます（4節）。
 
 ### キャッシュの有効期間（TTL）
 
@@ -299,11 +310,13 @@ Claude Code でどちらの TTL になるかは、契約の種類で決まりま
 | メインの会話 | 1時間 | 5分 |
 | それ以外（サブエージェント、コンパクションなど） | 5分（一部のヘルパーは1時間） | 5分 |
 
-API キーでも、`promptCacheTtl` の設定か `CLAUDE_CODE_PROMPT_CACHE_TTL` 環境変数で `1h` にできます。ただし書き込みが2倍になるので、**5分以上離れることがほとんどない作業では、かえって高くなります。** 同じ10ターンを1時間TTLで計算すると、合計は $0.841 です（5分TTLは $0.631）。
+API キーでも、`promptCacheTtl` の設定か `CLAUDE_CODE_PROMPT_CACHE_TTL` 環境変数で `1h` にできます。
+ただし書き込みが2倍になるので、**5分以上離れることがほとんどない作業では、かえって高くなります。** 同じ10ターンを1時間TTLで計算すると、合計は $0.841 です（5分TTLは $0.631）。
 
 ### 期限内でもキャッシュが壊れる操作
 
-キャッシュは先頭からの完全一致なので、途中が少しでも変わると、それより後ろはすべて書き込み直しです（"The match is exact, so a change anywhere in the prefix recomputes everything after it."、[How Claude Code uses prompt caching](https://code.claude.com/docs/en/prompt-caching.md)）。Claude Code のドキュメントには、次のような操作が挙げられています（主なもの）。
+キャッシュは先頭からの完全一致なので、途中が少しでも変わると、それより後ろはすべて書き込み直しです（"The match is exact, so a change anywhere in the prefix recomputes everything after it."、[How Claude Code uses prompt caching](https://code.claude.com/docs/en/prompt-caching.md)）。
+Claude Code のドキュメントには、次のような操作が挙げられています（主なもの）。
 
 - モデルの切り替え（`/model`）。キャッシュはモデルごとに別です
 - effort の変更（Opus 5.5 など一部のモデルでは、API キーやサブスクリプションならキャッシュが保たれます）
@@ -322,7 +335,8 @@ API キーでも、`promptCacheTtl` の設定か `CLAUDE_CODE_PROMPT_CACHE_TTL` 
 
 ### GitHub Copilot では
 
-- 2026年6月1日から、Copilot の課金は premium request（プロンプト1回ごとの課金）から、**トークン量に応じた GitHub AI Credits** に変わりました。入力・出力・キャッシュのトークンが、モデルごとの API 価格で計算されます。コード補完と Next Edit Suggestions は対象外です（[GitHub Copilot is moving to usage-based billing](https://github.blog/news-insights/company-news/github-copilot-is-moving-to-usage-based-billing/)）。
+- 2026年6月1日から、Copilot の課金は premium request（プロンプト1回ごとの課金）から、**トークン量に応じた GitHub AI Credits** に変わりました。
+  入力・出力・キャッシュのトークンが、モデルごとの API 価格で計算されます。コード補完と Next Edit Suggestions は対象外です（[GitHub Copilot is moving to usage-based billing](https://github.blog/news-insights/company-news/github-copilot-is-moving-to-usage-based-billing/)）。
   - 既存の年額プランの Pro / Pro+ 利用者向けには、premium request による説明ページがあります（"This article only applies to Copilot Pro and Copilot Pro+ subscribers on an existing annual plan."、[GitHub Docs：Copilot のリクエスト（年額プラン向け）](https://docs.github.com/en/copilot/concepts/billing/copilot-requests)）。
 - Copilot 経由の Claude Opus 5.5 の価格は、入力 $4.00、キャッシュ済み入力 $0.20、キャッシュ書き込み $5.00、出力 $20.00 で、Anthropic の定価と同じです（[Models and pricing for GitHub Copilot](https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing)）。
 - トークン量で課金されるので、**履歴の長さとキャッシュが料金に影響します。**「長いスレッドは、新しいリクエストのたびに履歴全体を運ぶ（A long thread carries its entire history into every new request.）」と GitHub 自身も書いています（[Optimizing your AI usage to maximize efficiency and reduce cost](https://docs.github.com/en/copilot/tutorials/optimize-ai-usage)）。
@@ -335,7 +349,8 @@ API キーでも、`promptCacheTtl` の設定か `CLAUDE_CODE_PROMPT_CACHE_TTL` 
 
 ### 期限切れの直後は、履歴全体を書き込み直す
 
-TTL を過ぎてから次のプロンプトを送ると、キャッシュに読めるものがありません。**それまでの履歴全体が、1.25倍の書き込みとして処理されます。**
+TTL を過ぎてから次のプロンプトを送ると、キャッシュに読めるものがありません。
+**それまでの履歴全体が、1.25倍の書き込みとして処理されます。**
 
 > your first message after a break longer than the cache lifetime misses the cache and reprocesses your full context.
 > （[Manage costs effectively](https://code.claude.com/docs/en/costs)）
@@ -387,7 +402,8 @@ TTL を過ぎてから次のプロンプトを送ると、キャッシュに読�
 
 ここからわかることは2つです。
 
-1. **期限が切れると、同じ作業が約4倍の料金になります。** ターン10だけで比べると約6倍です。会話が長いほど差は大きくなります。
+1. **期限が切れると、同じ作業が約4倍の料金になります。**
+   ターン10だけで比べると約6倍です。会話が長いほど差は大きくなります。
 2. **毎回期限が切れるなら、キャッシュを使わないほうが安くなります。** 書き込みの割増（1.25倍）を払ったのに、一度も読まれないからです。
 
 ### 期限切れが起きやすい場面
@@ -405,7 +421,22 @@ TTL を過ぎてから次のプロンプトを送ると、キャッシュに読�
 | 5〜60分の中断が多い（API キー利用） | 1時間TTL を検討する（下の補足） |
 | 使用量を確認したい | `/usage` の `Prompt cache (main)` 行で、キャッシュのヒット率、ミスの回数、今キャッシュが温かいかを確認する |
 
-> **補足**：Opus 5.5 で、同じ履歴を5〜60分の間隔で2回使う場合を、0節の倍率で計算します。5分TTL では毎回期限が切れるので 1.25倍＋1.25倍＝2.5倍、1時間TTL では 2倍（書き込み）＋0.05倍（読み込み）＝2.05倍です。間隔が5〜60分なら、2回目からは1時間TTL のほうが安くなります。一方、間隔が5分未満なら5分TTL でも期限は切れないので、書き込みが安い5分TTL のほうが安くなります。
+> **補足**：Opus 5.5 で、同じ履歴を5〜60分の間隔で2回使う場合を、0節の倍率で計算します。5分TTL では毎回期限が切れるので 1.25倍＋1.25倍＝2.5倍、1時間TTL では 2倍（書き込み）＋0.05倍（読み込み）＝2.05倍です。
+> 間隔が5〜60分なら、2回目からは1時間TTL のほうが安くなります。一方、間隔が5分未満なら5分TTL でも期限は切れないので、書き込みが安い5分TTL のほうが安くなります。
+
+#### 1時間TTL は、2回読まれて初めて元が取れる
+
+同じ履歴を何回使うかで、入力にかかる倍率（入力価格を1倍とする）を比べます。
+
+| 使う回数 | キャッシュなし | 5分TTL・期限内 | 5分TTL・毎回期限切れ | 1時間TTL・期限内 |
+|---|---|---|---|---|
+| 1回 | 1.00 | 1.25 | 1.25 | 2.00 |
+| 2回 | 2.00 | **1.30** | 2.50 | 2.05 |
+| 3回 | 3.00 | 1.35 | 3.75 | **2.10** |
+
+- 5分TTL は、書き込み（1.25倍）の後に**1回**読まれれば、キャッシュなしより安くなります（1.30 < 2.00）。
+- 1時間TTL は、書き込みが2倍なので、1回読まれただけではキャッシュなしより少し高くなります（2.05 > 2.00）。**2回**読まれて初めて安くなります（2.10 < 3.00）。
+- そのため1時間TTL は、「5〜60分の中断が多く、5分TTL では期限が切れてしまう」ときに選ぶものです。上の比較のとおり、その場合は1回読まれるだけで、5分TTL・毎回期限切れ（2.50倍）より安くなります。
 
 ### GitHub Copilot では
 
@@ -435,17 +466,20 @@ TTL を過ぎてから次のプロンプトを送ると、キャッシュに読�
 > Use `/clear` to start fresh when switching to unrelated work. Stale context wastes tokens on every subsequent message.
 > （[Manage costs effectively](https://code.claude.com/docs/en/costs)）
 
-`/rename` で名前を付けてから `/clear` すれば、あとで `/resume` で戻れます。`/clear` 自体のコストはゼロです。
+`/rename` で名前を付けてから `/clear` すれば、あとで `/resume` で戻れます。
+`/clear` 自体のコストはゼロです。
 
 **2. 失敗した道は `/rewind` で巻き戻す**
 
-方針が間違っていたとき、「さっきのは無しで」と言い足すと、間違った試行は履歴に残ったままです。`/rewind`（または Esc を2回）で、その前のターンまで会話とコードを戻せます。巻き戻した先はキャッシュ済みのプレフィックスなので、キャッシュも壊れません。
+方針が間違っていたとき、「さっきのは無しで」と言い足すと、間違った試行は履歴に残ったままです。
+`/rewind`（または Esc を2回）で、その前のターンまで会話とコードを戻せます。巻き戻した先はキャッシュ済みのプレフィックスなので、キャッシュも壊れません。
 
 **3. 量の多い作業はサブエージェントに任せる**
 
 テストの実行、ドキュメントの取得、ログの解析などはサブエージェントに任せると、長い出力はサブエージェント側に残り、メインの会話には要約だけが返ります（[Manage costs effectively](https://code.claude.com/docs/en/costs)）。
 
-ただし、サブエージェントも自分でリクエストを送るので、**全体の使用量が減るとは限りません。** 減るのはメインの会話のコンテキストです。単純な作業なら、サブエージェントに `model: haiku` を指定すると安くなります。
+ただし、サブエージェントも自分でリクエストを送るので、**全体の使用量が減るとは限りません。** 減るのはメインの会話のコンテキストです。
+単純な作業なら、サブエージェントに `model: haiku` を指定すると安くなります。
 
 **4. 入ってくる量を、入る前に減らす**
 
@@ -459,14 +493,17 @@ TTL を過ぎてから次のプロンプトを送ると、キャッシュに読�
 
 **6. 思考の量を作業に合わせる**
 
-思考は出力として課金され、そのうえ次のターン以降の履歴にも残ります（2節）。深い推論がいらない作業では、`/effort` か `/model` で effort を下げると、思考の量を減らせます（[Manage costs effectively](https://code.claude.com/docs/en/costs)）。
+思考は出力として課金され、そのうえ次のターン以降の履歴にも残ります（2節）。
+深い推論がいらない作業では、`/effort` か `/model` で effort を下げると、思考の量を減らせます（[Manage costs effectively](https://code.claude.com/docs/en/costs)）。
 
 - Opus 5.5、Sonnet 5.5、Haiku 5.5、Fable のモデルでは、思考を止めることはできません。effort で調整します（同ページ）。
-- effort を変えると、多くのモデルではキャッシュが無効になります。API キーまたは Claude サブスクリプションで使う Opus 5.5、Sonnet 5.5、Haiku 5.5、Fable 5.1 以降では、キャッシュが保たれます（[How Claude Code uses prompt caching](https://code.claude.com/docs/en/prompt-caching.md)）。それ以外のモデルでは、セッションの最初に決めておきます。
+- effort を変えると、多くのモデルではキャッシュが無効になります。API キーまたは Claude サブスクリプションで使う Opus 5.5、Sonnet 5.5、Haiku 5.5、Fable 5.1 以降では、キャッシュが保たれます（[How Claude Code uses prompt caching](https://code.claude.com/docs/en/prompt-caching.md)）。
+  それ以外のモデルでは、セッションの最初に決めておきます。
 
 **`max` は、コストに見合う向上があるとは限らない**
 
-effort の `max` は「トークンの消費に制約を設けず、能力を最大にする（Absolute maximum capability with no constraints on token spending.）」設定です（[Effort](https://platform.claude.com/docs/en/build-with-claude/effort)）。思考は出力として課金され、次のターン以降は履歴として入力にも積み上がります（2節）。
+effort の `max` は「トークンの消費に制約を設けず、能力を最大にする（Absolute maximum capability with no constraints on token spending.）」設定です（[Effort](https://platform.claude.com/docs/en/build-with-claude/effort)）。
+思考は出力として課金され、次のターン以降は履歴として入力にも積み上がります（2節）。
 
 公式ドキュメントは、`max` についてモデルごとに次のように書いています（[Effort](https://platform.claude.com/docs/en/build-with-claude/effort)）。
 
@@ -477,7 +514,8 @@ effort の `max` は「トークンの消費に制約を設けず、能力を最
 | Claude Sonnet 5.5 | 「`xhigh` や `max` は、自分の評価で品質の向上が確認できた場合にだけ使う」 |
 | Claude Opus 5.5 | 既定は `medium`。「以前のモデルの設定を持ち込まず、自分の評価で effort を比べること」 |
 
-さらに、推論を長くすると**かえって精度が下がる**作業があることを報告した研究があります。Gema ら "Inverse Scaling in Test-Time Compute"（[arXiv:2507.14417](https://arxiv.org/abs/2507.14417)、TMLR 2025年12月掲載）は、推論モデルの推論を長くすると性能が下がる評価タスクを作り、テスト時の計算量と精度の間に逆スケーリングの関係が見られたと報告しています。
+さらに、推論を長くすると**かえって精度が下がる**作業があることを報告した研究があります。
+Gema ら "Inverse Scaling in Test-Time Compute"（[arXiv:2507.14417](https://arxiv.org/abs/2507.14417)、TMLR 2025年12月掲載）は、推論モデルの推論を長くすると性能が下がる評価タスクを作り、テスト時の計算量と精度の間に逆スケーリングの関係が見られたと報告しています。
 
 - タスクは4種類です：注意をそらす情報を混ぜた単純な数え上げ、見せかけの特徴を含む回帰、制約を追いかける推論、高度な AI リスク
 - 報告された失敗のパターンの1つ目は「Claude のモデルは、無関係な情報にますます気を取られるようになる（Claude models become increasingly distracted by irrelevant information）」です
@@ -497,13 +535,15 @@ effort の `max` は「トークンの消費に制約を設けず、能力を最
 
 ### `/compact` の注意点
 
-`/compact` は、それまでの会話の履歴を**要約に置き換えて**コンテキストを小さくするコマンドです。コンテキストが上限に近づくと、Claude Code は同じことを自動でも行います（自動コンパクション）。便利ですが、次の点に注意が必要です。
+`/compact` は、それまでの会話の履歴を**要約に置き換えて**コンテキストを小さくするコマンドです。コンテキストが上限に近づくと、Claude Code は同じことを自動でも行います（自動コンパクション）。
+便利ですが、次の点に注意が必要です。
 
 **1. 要約なので、細部が落ちる。残るのは「作業として重要なもの」とは限らない**
 
 要約に残らなかった情報は、モデルからは見えなくなります。
 
-何も指定しない場合、要約に残るのは、**自動の要約が重要だと推測したもの**です。あなたが作業として重要だと考えているものが残るとは限りません。Claude Code のドキュメントは、`/compact` に残す内容を指定する方法について、次のように説明しています。
+何も指定しない場合、要約に残るのは、**自動の要約が重要だと推測したもの**です。あなたが作業として重要だと考えているものが残るとは限りません。
+Claude Code のドキュメントは、`/compact` に残す内容を指定する方法について、次のように説明しています。
 
 > The summary keeps what you choose instead of what the automatic pass guesses is important.
 > （要約は、自動の処理が重要だと推測したものではなく、あなたが選んだものを残します）
@@ -542,34 +582,41 @@ effort の `max` は「トークンの消費に制約を設けず、能力を最
 
 **3. キャッシュの期限が切れた後の `/compact` が一番高い**
 
-キャッシュが有効なうちなら、要約のためのリクエストは履歴をキャッシュから読めるので、「コンテキストの大きさから想像されるより、ずっと安い」とされています（"costs a fraction of what the context size suggests"）。期限が切れていると、履歴をキャッシュなしで読み直します（[How Claude Code uses prompt caching](https://code.claude.com/docs/en/prompt-caching.md)）。
+キャッシュが有効なうちなら、要約のためのリクエストは履歴をキャッシュから読めるので、「コンテキストの大きさから想像されるより、ずっと安い」とされています（"costs a fraction of what the context size suggests"）。
+期限が切れていると、履歴をキャッシュなしで読み直します（[How Claude Code uses prompt caching](https://code.claude.com/docs/en/prompt-caching.md)）。
 
 ```
 キャッシュが有効なうちに /compact    → 要約のリクエストは、履歴をキャッシュ読み込み（0.05倍）
 期限が切れた後に /compact            → 要約のリクエストは、履歴をまるごと非キャッシュで読み直す
 ```
 
-席を外す・長い作業が終わった、という区切りでは、**離れる前に** `/compact` します。戻ってから `/compact` すると、高い方になります。
+席を外す・長い作業が終わった、という区切りでは、**離れる前に** `/compact` します。
+戻ってから `/compact` すると、高い方になります。
 
 **4. 会話のキャッシュは作り直しになる**
 
-要約に置き換えると、履歴の先頭が変わるので、会話の部分のキャッシュは無効になります（2節「期限内でもキャッシュが壊れる操作」）。CLAUDE.md などのプロジェクトのコンテキストも、ファイルを変えていなくてもキャッシュを作り直します。ただし、作り直すのは短くなった要約の分だけなので、`/compact` の次のターンが特に遅くなるわけではありません（同ページ）。
+要約に置き換えると、履歴の先頭が変わるので、会話の部分のキャッシュは無効になります（2節「期限内でもキャッシュが壊れる操作」）。CLAUDE.md などのプロジェクトのコンテキストも、ファイルを変えていなくてもキャッシュを作り直します。
+ただし、作り直すのは短くなった要約の分だけなので、`/compact` の次のターンが特に遅くなるわけではありません（同ページ）。
 
 **5. 作業の途中ではなく、区切りで実行する**
 
-自動コンパクションは、作業の途中でも始まります。いつ要約されるかを自分で選ぶために、タスクとタスクの間など、区切りのよいところで `/compact` を実行することが勧められています（同ページ）。
+自動コンパクションは、作業の途中でも始まります。
+いつ要約されるかを自分で選ぶために、タスクとタスクの間など、区切りのよいところで `/compact` を実行することが勧められています（同ページ）。
 
 **6. 失敗した道を捨てたいなら `/rewind` を使う**
 
-`/compact` は、失敗した試行も含めて要約します。間違った方針を丸ごと捨てたいときは、`/rewind` で前のターンに戻します。`/rewind` は、すでにキャッシュにある時点まで履歴を切り詰めるだけなので、キャッシュも作り直しになりません（同ページ）。
+`/compact` は、失敗した試行も含めて要約します。
+間違った方針を丸ごと捨てたいときは、`/rewind` で前のターンに戻します。`/rewind` は、すでにキャッシュにある時点まで履歴を切り詰めるだけなので、キャッシュも作り直しになりません（同ページ）。
 
 **7. CLAUDE.md の変更は `/compact` の後に効く**
 
-作業中に CLAUDE.md を編集しても、実行中のセッションにはすぐには反映されません。Claude Code はセッション開始時に CLAUDE.md を読み込んで保持しているためです。反映するには、`/clear` か `/compact` を実行するか、Claude Code を再起動します（同ページ）。
+作業中に CLAUDE.md を編集しても、実行中のセッションにはすぐには反映されません。Claude Code はセッション開始時に CLAUDE.md を読み込んで保持しているためです。
+反映するには、`/clear` か `/compact` を実行するか、Claude Code を再起動します（同ページ）。
 
 **8. 放置している間に自動で要約されることがある**
 
-1時間TTL の長い会話を放置していると、Claude Code が自動で要約することがあります（アイドルコンパクション）。止めたい場合は、設定 `idleCompaction` を `false` にします。この設定には Claude Code v2.1.290 以降が必要です（同ページ、[Manage costs effectively](https://code.claude.com/docs/en/costs) の "Background token usage"）。
+1時間TTL の長い会話を放置していると、Claude Code が自動で要約することがあります（アイドルコンパクション）。
+止めたい場合は、設定 `idleCompaction` を `false` にします。この設定には Claude Code v2.1.290 以降が必要です（同ページ、[Manage costs effectively](https://code.claude.com/docs/en/costs) の "Background token usage"）。
 
 | 注意点 | 対処 |
 |---|---|
@@ -605,7 +652,8 @@ Liu ら（2023）の論文 "Lost in the Middle: How Language Models Use Long Con
 
 ### エージェントでは「中ほど」に何がたまるか
 
-Claude Code のコンテキストは、1節の順番（システムプロンプト → プロジェクトのコンテキスト → 会話）で並びます。会話が長くなると、次のように並びます。
+Claude Code のコンテキストは、1節の順番（システムプロンプト → プロジェクトのコンテキスト → 会話）で並びます。
+会話が長くなると、次のように並びます。
 
 ```
 [先頭]  システムプロンプト、CLAUDE.md
@@ -616,7 +664,8 @@ Claude Code のコンテキストは、1節の順番（システムプロンプ�
 [末尾]  最新のプロンプト、直近のツール結果
 ```
 
-論文の結果をこの並びに当てはめると、会話の初めに伝えた要件や方針は、会話が長くなるにつれて「中ほど」に移っていきます。ただし、これは論文の結果を当てはめた見方で、コーディングエージェントで検証されたものではありません。
+論文の結果をこの並びに当てはめると、会話の初めに伝えた要件や方針は、会話が長くなるにつれて「中ほど」に移っていきます。
+ただし、これは論文の結果を当てはめた見方で、コーディングエージェントで検証されたものではありません。
 
 ### 回避方法
 
@@ -645,7 +694,8 @@ Claude Code のコンテキストは、1節の順番（システムプロンプ�
 
 ### 基本方針：状態は会話ではなくファイルに置く
 
-**会話は使い捨て、ファイルが正**、と考えます。作業の状態をファイルに書いておけば、`/clear` した後でも「progress.md を読んで続きから」の1行で再開できます。しかも、新しいセッションは短いコンテキストで始まるので、期限切れで書き込み直す量も小さくなります。
+**会話は使い捨て、ファイルが正**、と考えます。
+作業の状態をファイルに書いておけば、`/clear` した後でも「progress.md を読んで続きから」の1行で再開できます。しかも、新しいセッションは短いコンテキストで始まるので、期限切れで書き込み直す量も小さくなります。
 
 | ファイル | 書くこと |
 |---|---|
@@ -682,7 +732,8 @@ progress.md の例：
 1. **区切りごとに progress.md を更新させる**：「ここまでの状態を progress.md に書いて」と指示してから `/clear` する。CLAUDE.md に「作業の区切りで progress.md を更新すること」と書いておくと、毎回言わずに済みます。
 2. **手順をやり直しても壊れないようにする**：途中で止まっても、同じ手順をもう一度実行して問題が起きないようにします（例：「ファイルがなければ作る」）。
 3. **小さく進めて、こまめに検証する**：1ファイル書いたらテストする。途中で止まっても、そこまでは正しいと言える状態を保ちます（[Manage costs effectively](https://code.claude.com/docs/en/costs) の "Test incrementally"）。
-4. **セッション自体の再開機能も併用する**：Claude Code では `/rename` → `/resume` で会話に戻れます。`/rewind` で会話とコードをチェックポイントに戻せます。ただし、期限切れの後の `/resume` は履歴全体を書き込み直します（3節）。ファイルから新しいセッションで再開すれば、書き込むのは前置きと読み込んだファイルの分です。
+4. **セッション自体の再開機能も併用する**：Claude Code では `/rename` → `/resume` で会話に戻れます。`/rewind` で会話とコードをチェックポイントに戻せます。
+   ただし、期限切れの後の `/resume` は履歴全体を書き込み直します（3節）。ファイルから新しいセッションで再開すれば、書き込むのは前置きと読み込んだファイルの分です。
 
 ### 「計画を立ててから実行」と「ファイルに残しながら実行」は役割が違う
 
@@ -691,13 +742,15 @@ progress.md の例：
 | 計画を立ててから実行する | 最初の方向が間違っていたときの、やり直しを防ぐ | 「plan mode を複雑なタスクに使う。…最初の方向が間違っていたときの、高くつくやり直しを防ぐ（preventing expensive re-work when the initial direction is wrong）」（[Manage costs effectively](https://code.claude.com/docs/en/costs)） |
 | 計画と進み具合をファイルに残しながら実行する | 中断・`/clear`・コンパクションの後に再開する | 会話の初めの細かい指示は、コンパクションで失われることがある（[How Claude Code works](https://code.claude.com/docs/en/how-claude-code-works)、4節） |
 
-どちらか一方ではなく、**両方を組み合わせます。** ただし、計画の立て方と置き場所は、計画の複雑さで変えます（下の「計画の複雑さで置き場所を変える」）。
+どちらか一方ではなく、**両方を組み合わせます。**
+ただし、計画の立て方と置き場所は、計画の複雑さで変えます（下の「計画の複雑さで置き場所を変える」）。
 
 #### plan mode の性質
 
 plan mode を使うかどうかは、次の性質を知ったうえで決めます（[Permission modes](https://code.claude.com/docs/en/permission-modes) の "Analyze before you edit with plan mode"）。
 
-- **ソースは編集しない**：「Claude はファイルを読み、調べるためのシェルコマンドを実行し、計画を書くが、ソースは編集しない（Claude reads files, runs shell commands to explore, and writes a plan, but does not edit your source.）」。編集は、計画を承認するまでブロックされます。ただし、bypass permissions が使える対話型ターミナルのセッションでは、このブロックは強制されません（"Except in interactive terminal sessions with bypass permissions available, edits stay blocked until you approve the plan."）。なお、リポジトリ内の `plan.md` や `progress.md` のような、ソース以外のファイルを plan mode で書けるかどうかは、ドキュメントに書かれていません。この記事では、**plan mode のあいだはリポジトリに `plan.md` や `progress.md` を書かせず、承認後に書かせる**前提で進めます。
+- **ソースは編集しない**：「Claude はファイルを読み、調べるためのシェルコマンドを実行し、計画を書くが、ソースは編集しない（Claude reads files, runs shell commands to explore, and writes a plan, but does not edit your source.）」。編集は、計画を承認するまでブロックされます。ただし、bypass permissions が使える対話型ターミナルのセッションでは、このブロックは強制されません（"Except in interactive terminal sessions with bypass permissions available, edits stay blocked until you approve the plan."）。
+  なお、リポジトリ内の `plan.md` や `progress.md` のような、ソース以外のファイルを plan mode で書けるかどうかは、ドキュメントに書かれていません。この記事では、**plan mode のあいだはリポジトリに `plan.md` や `progress.md` を書かせず、承認後に書かせる**前提で進めます。
 - **計画そのものはファイルに書き出される**：plan mode は計画をファイルに書き出します。保存先は設定 `plansDirectory` で変えられます（[Settings reference](https://code.claude.com/docs/en/settings-reference)）。
 - **コンパクションの後も読み込み直される**：plan mode で書いた計画は、コンパクションの後にディスクから読み込み直されます（[Explore the context window](https://code.claude.com/docs/en/context-window) の "What survives compaction"）。
 - **承認前に練り直せる**：承認画面で「No, keep planning」を選ぶと、plan mode のまま、直してほしい点を伝えて計画を作り直させられます。`Ctrl+G` で、計画をエディタで直接直すこともできます。
@@ -707,7 +760,8 @@ plan mode を使うかどうかは、次の性質を知ったうえで決めま�
 
 #### 計画の複雑さで置き場所を変える
 
-1回のプロンプトや plan mode の中で完結する計画は、たいてい単純な計画です。複雑な計画ほど、作るのにも直すのにも時間がかかり、セッションをまたぎます。そのため、リポジトリのファイルに書き、レビューと修正を繰り返して固めてから実行します。
+1回のプロンプトや plan mode の中で完結する計画は、たいてい単純な計画です。
+複雑な計画ほど、作るのにも直すのにも時間がかかり、セッションをまたぎます。そのため、リポジトリのファイルに書き、レビューと修正を繰り返して固めてから実行します。
 
 | | 単純な計画 | 複雑な計画 |
 |---|---|---|
@@ -716,7 +770,8 @@ plan mode を使うかどうかは、次の性質を知ったうえで決めま�
 | 練り直し | plan mode の「No, keep planning」や `Ctrl+G` で足りる | 書く → レビュー → 直す、を何回も繰り返す。人のレビューや、別のコンテキストのレビュー役（サブエージェントなど）の確認も入れる |
 | 置き場所 | plan mode の計画、または会話の中 | リポジトリの `plan.md`。版管理ができ、差分が見え、他の人とも共有できる |
 
-この使い分けは公式ドキュメントに書かれたものではなく、この記事の考えです。根拠にしている事実は次の3つです。
+この使い分けは公式ドキュメントに書かれたものではなく、この記事の考えです。
+根拠にしている事実は次の3つです。
 
 - 会話の中で伝えた細かい指示は、コンパクションで失われることがある（[How Claude Code works](https://code.claude.com/docs/en/how-claude-code-works)）
 - plan mode の計画が `/clear` や新しいセッションの後にも読み込まれるかは、確認できていない（上の「plan mode の性質」）
@@ -742,11 +797,13 @@ plan mode を使うかどうかは、次の性質を知ったうえで決めま�
    区切りごとに progress.md を更新して」と指示する
 ```
 
-plan mode を使わない場合、「確認するまで実装しない」は会話の中の指示でしかありません。plan mode なら、編集は承認まで仕組みとしてブロックされます（bypass permissions が使える対話型ターミナルのセッションを除く）。
+plan mode を使わない場合、「確認するまで実装しない」は会話の中の指示でしかありません。
+plan mode なら、編集は承認まで仕組みとしてブロックされます（bypass permissions が使える対話型ターミナルのセッションを除く）。
 
 #### 注意
 
-ファイルへの書き込みにもトークンを使います。書き込む内容は出力として課金され、あとで読ませればその分が入力になります。途中の出力をそのまま保存させるより、**決めたことと進み具合の要約**に絞ります。
+ファイルへの書き込みにもトークンを使います。書き込む内容は出力として課金され、あとで読ませればその分が入力になります。
+途中の出力をそのまま保存させるより、**決めたことと進み具合の要約**に絞ります。
 
 ### GitHub Copilot では
 
@@ -766,7 +823,8 @@ plan mode を使わない場合、「確認するまで実装しない」は会�
 - Lost in the Middle を避けるには、重要な情報を先頭か末尾に置き、コンテキストを短く保つ。
 - 中断に強くするには、状態を会話ではなくファイルに置く。
 
-この6つの対策はばらばらではなく、**「コンテキストを短く、きれいに、ファイルに外出しする」**という1つの方針にまとまります。コストが下がり、中断にも強くなります。
+この6つの対策はばらばらではなく、**「コンテキストを短く、きれいに、ファイルに外出しする」**という1つの方針にまとまります。
+コストが下がり、中断にも強くなります。
 
 ## 参考資料
 
