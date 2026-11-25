@@ -7,7 +7,7 @@ tags:
   - プロンプトキャッシュ
   - LLM
 private: false
-updated_at: '2026-11-24T00:09:44+09:00'
+updated_at: '2026-11-25T09:23:10+09:00'
 id: 0524aa71df7c9a62a2ea
 organization_url_name: null
 slide: false
