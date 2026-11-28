@@ -7,11 +7,13 @@ tags:
   - 要求仕様
   - ClaudeCode
 private: false
-updated_at: ''
-id: null
+updated_at: '2026-11-28T23:07:11+09:00'
+id: 4eb7aff7ee2bf11bce1d
 organization_url_name: null
 slide: false
 ignorePublish: false
+posting_campaign_uuid: null
+agreed_posting_campaign_term: false
 ---
 
 # AIに仕様を伝えるならUSDM：要求・理由から仕様を導出する
