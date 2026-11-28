@@ -1,13 +1,13 @@
 ---
 title: >-
-  GitHub Copilot の「AIへの指示書」まとめ：copilot-instructions.md / Skills / AGENTS.md /
-  カスタムエージェント（VS Code / Copilot CLI）
+  GitHub Copilot のカスタム指示・スキル・AGENTS.md・カスタムエージェントの使い分け（VS Code /
+  Copilot CLI）2026年11月版
 tags:
   - VSCode
   - GitHubCopilot
   - GitHub
   - AI
-  - LLM
+  - AIエージェント
 private: false
 updated_at: '2026-11-23T19:15:17+09:00'
 id: aa0b87bdf13e2219d6c1
@@ -17,8 +17,6 @@ ignorePublish: false
 posting_campaign_uuid: null
 agreed_posting_campaign_term: false
 ---
-
-# GitHub Copilot の「AIへの指示書」まとめ（2026年11月版）
 
 GitHub Copilot に読ませる Markdown ファイル（`copilot-instructions.md`、`*.instructions.md`、`SKILL.md`、`AGENTS.md`、`*.agent.md`）は種類が増え、置ける場所も増えてきました。
 どれに何を書けばよいのか、長い手順書はどこに置けば守ってもらえるのか、VS Code と Copilot CLI で扱いが違うのか。毎回調べ直しているので、公式ドキュメントをもとに整理しました。
@@ -30,7 +28,7 @@ GitHub Copilot に読ませる Markdown ファイル（`copilot-instructions.md`
 - **GitHub CLI の `gh skill`**（スキルの検索・インストール用コマンド）
 
 > **情報の鮮度について**
-> 本記事は 2026年11月時点の公式ドキュメント（VS Code ドキュメントは 2026/11/18 更新版）に基づいています。どちらのツールも更新が頻繁なので、最新の公式ドキュメントもあわせて確認してください。
+> 本記事は 2026年11月時点の公式ドキュメント（VS Code ドキュメントは 2026/11/18 更新版）に基づいています。いずれのツールも更新が頻繁なので、最新の公式ドキュメントもあわせて確認してください。
 
 ---
 
@@ -41,7 +39,7 @@ GitHub Copilot に読ませる Markdown ファイル（`copilot-instructions.md`
 - **`AGENTS.md`** は複数の AI エージェントで共通の形式です。ただし、読むかどうか・どう探すかはハーネス（ツール）ごとに違います。
 - **役割ごとの設定**（使うツール、モデル、指示）はカスタムエージェント（`.github/agents/*.agent.md`）。
 - **長い手順書**は、常に読まれる指示書に貼るより、スキルに分けて参照ファイルやスクリプトにするほうが守られやすい、というのが公式ドキュメントの方向性です。
-- どのファイルを読むかを決めるのは**モデルではなくハーネス**です。VS Code の **Local ハーネスは非推奨**で、2027年2月に削除予定です。
+- どのファイルを読むかを決めるのは**モデルではなくハーネス**です。
 
 ---
 
@@ -55,24 +53,22 @@ VS Code の Copilot Chat には、モデル（GPT、Claude など）とは別に
 | ハーネス | ひとことで言うと |
 |---|---|
 | **Copilot**（標準） | Copilot CLI と同じルールで `.github/`、`~/.copilot/` を読む。**本記事は基本的にこれを前提にしています** |
-| Local（**非推奨**、2027年2月に削除予定） | 従来の VS Code 独自の動作。`chat.*` 設定で読み込みを変えられる |
 | Anthropic Claude / OpenAI Codex | それぞれ Claude Code / Codex と同じルールで読む |
 
 ### ハーネスの選び方と確認方法
 
 ハーネスは、**新しいセッションを始めるときに**選びます（[Choose an agent harness](https://code.visualstudio.com/docs/agents/run/agent-harnesses)）。
 
-1. Chat ビューで **New Chat**（`+`）を押す（Agents ウィンドウでは **New** を押して、フォルダかリポジトリを選ぶ）
+1. Chat ビューで **New Chat**（`+`）を押す（Agents ウィンドウでは **New** を押して、フォルダーかリポジトリを選ぶ）
 2. チャット入力欄の **Session Target** のドロップダウンで、ハーネスを選ぶ
 3. 最初のプロンプトを送る
 
-- **最初のプロンプトを送る前に選びます。** 途中で変えられるのは Local ハーネスから別のハーネスに引き継ぐときだけなので、それ以外は新しいセッションを作ります。
+- **最初のプロンプトを送る前に選びます。**
 - **モデルやエージェントを変えても、ハーネスは変わりません。**（"Changing the model or agent role does not change the harness."）
-- 今のハーネスは、エディタのチャットでは**チャットのタイトルの先頭**に、Agents ウィンドウでは入力欄に薄い文字で表示されます。
-- Session Target には、使える条件を満たしたハーネスだけが表示されます。Local ハーネスはエディタの Chat ビューでだけ選べます（Agents ウィンドウでは選べません）。
+- 今のハーネスは、エディターのチャットでは**チャットのタイトルの先頭**に、Agents ウィンドウでは入力欄に薄い文字で表示されます。
 - **デフォルトのハーネスを名前で指定する設定はありません。** ドキュメントでは「Start with **Copilot** for day-to-day coding and agent tasks」と、Copilot ハーネスが勧められています。
 
-「ネットの記事のとおりに設定したのに効かない」「`~/.copilot/` に置いたのに読まれない」ときは、まずどのハーネスを使っているかを確認してください。以前の記事や解説で紹介されている `chat.*` 設定の多くは、Local ハーネスにしか効きません。
+「ネットの記事のとおりに設定したのに効かない」「`~/.copilot/` に置いたのに読まれない」ときは、まずどのハーネスを使っているかを確認してください。
 
 詳しくは [7章](#7-ハーネスについて) で説明します。
 
@@ -84,7 +80,13 @@ VS Code の Copilot Chat には、モデル（GPT、Claude など）とは別に
 
 この記事では、AI エージェントに「このプロジェクトではこう作業してほしい」と伝えるために置いておく Markdown ファイルを、まとめて **AIへの指示書** と呼びます。毎回プロンプトに書かなくても、ファイルに書いておけばエージェントが読み込んでくれます。
 
-指示書には何種類かあり、**いつ読み込まれるか**が違います。常に読まれるもの、対象のファイルを扱うときだけ読まれるもの、必要と判断されたときだけ読まれるもの、ユーザーが選んだときだけ使われるものがあります。何を書くかは、この読み込まれ方に合わせて決めます。
+指示書には何種類かあり、**いつ読み込まれるか**が違います。
+何を書くかは、この読み込まれ方に合わせて決めます。
+
+- 常に読まれるもの
+- 対象のファイルを扱うときだけ読まれるもの
+- 必要と判断されたときだけ読まれるもの
+- ユーザーが選んだときだけ使われるもの
 
 ただし、指示書は「お願い」であって強制ではありません。
 
@@ -101,14 +103,14 @@ VS Code の Copilot Chat には、モデル（GPT、Claude など）とは別に
 | `AGENTS.md` | プロジェクトの概要、ビルド・テストのコマンド、規約など | ハーネスによる（Copilot では常に） | Copilot 以外のエージェント（Codex など）と共通で使える形式 | 4 |
 | `*.agent.md`（カスタムエージェント） | 役割（レビュー担当、計画担当など）ごとの指示、使うツール、モデル | ユーザーが選んだとき、またはサブエージェントとして呼ばれたとき | 指示だけでなく、ツールやモデルもまとめて切り替えられる | 5 |
 
-GitHub の公式ドキュメントでは、ほぼすべての作業に関係するシンプルな指示はカスタム指示に、関連するときだけ読ませたい詳細な指示はスキルにすることが推奨されています（[Adding agent skills for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills)）。
+GitHub の公式ドキュメントでは、ほぼすべての作業に関係するシンプルな指示はカスタム指示（custom instructions。`copilot-instructions.md`、`*.instructions.md`、`AGENTS.md` など、常に、または対象のファイルを扱うときに読み込まれる指示ファイル）に、関連するときだけ読ませたい詳細な指示はスキルにすることが推奨されています（[Adding agent skills for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills)）。
 VS Code のドキュメントは、カスタムエージェントを作るのは「繰り返し出てくる役割が、専用の指示・ツール・出力形式を必要とするとき」で、プロジェクト全体の規約はカスタム指示に、その場限りの要求はプロンプトに書くよう説明しています（[Custom agents in VS Code](https://code.visualstudio.com/docs/agent-customization/custom-agents)）。
-
-> 補足：VS Code には `*.prompt.md`（プロンプトファイル）もありますが、「Other harnesses don't load prompt files.」とあり、非推奨の Local ハーネスでしか読まれません（[Custom agents in VS Code](https://code.visualstudio.com/docs/agent-customization/custom-agents)）。本記事では扱いません。
+スキルとカスタムエージェントの違いと組み合わせ方は、[5章](#スキルとカスタムエージェントの違い)で説明します。
 
 ### 例：カスタム指示とスキルの書き分け
 
-「全部 `copilot-instructions.md` に書けばいいのでは？」と思うかもしれません。でも、`copilot-instructions.md` は**チャットのたびに毎回送られる**ファイルです。E2E テストの手順をここに書くと、README の誤字を直してもらうときにもその手順が送られます。手順が増えるほど指示書が長くなり、本当に毎回守ってほしいルールが埋もれます。
+「全部 `copilot-instructions.md` に書けばいいのでは？」と思うかもしれません。
+でも、`copilot-instructions.md` は**チャットのたびに毎回送られる**ファイルです。E2E テストの手順をここに書くと、README の誤字を直してもらうときにもその手順が送られます。手順が増えるほど指示書が長くなり、本当に毎回守ってほしいルールが埋もれます。
 
 そこで、同じテストの話でも、毎回守ってほしい短いルールと、テストを実行するときにだけ必要な手順に分けます。
 
@@ -153,7 +155,9 @@ description: Playwright の E2E テストを実行し、失敗したテストを
 | 向いている内容 | どの作業でも守ってほしい、1 行で意味が通るルール | 特定の作業でだけ必要な、手順・前提・注意点 |
 | 長く書くと | 毎回送られる量が増え、ほかの指示が埋もれる | 呼ばれたときだけ読まれるので、詳しく書ける |
 
-判断の目安は「**この 1 行は、README の誤字修正を頼んだときにも必要か？**」です。必要ならカスタム指示に、そうでなければスキルに書きます。スキルの読み込みの仕組みは [3章](#3-skillsskillmd)、長い手順書の置き方は [6章](#6-長い手順がある場合の実装のしかた) で詳しく説明します。
+判断の目安の 1 つは「**この 1 行は、README の誤字修正を頼んだときにも必要か？**」です。
+必要ならカスタム指示に、そうでなければスキルに書きます。
+スキルの読み込みの仕組みは [3章](#3-skillsskillmd)、長い手順書の置き方は [6章](#6-長い手順がある場合の実装のしかた) で詳しく説明します。
 
 #### 参考：Anthropic（Claude Code）も同じ考え方
 
@@ -173,7 +177,8 @@ Claude Code の公式ドキュメントでも、常に読まれる `CLAUDE.md` �
 
 ## 2. copilot-instructions.md
 
-リポジトリ全体のルールを書くファイルです。対象のファイルを絞りたいルールは `*.instructions.md` に分けます。
+リポジトリ全体のルールを書くファイルです。
+特定のファイルだけに適用するルールは `*.instructions.md` に分けます。
 
 GitHub のドキュメントでは、カスタム指示は「短く、それだけで意味が通る文」にすると効果的で、チャットのたびに送られるので大半のリクエストに当てはまる内容にすべき、とされています（[About customizing GitHub Copilot responses](https://docs.github.com/en/copilot/concepts/prompting-and-context/custom-instructions)）。
 
@@ -198,11 +203,26 @@ Copilot CLI は、次の場所からこれらのファイルを探します。
 > the repository root, the current working directory, intermediate directories between them, and any directories nested in the path of a file it is working on.
 
 ただし `.github/instructions/` については「but not intermediate directories」とあり、中間ディレクトリからは探しません。
+中間ディレクトリとは、リポジトリのルートとカレントディレクトリの間にあるディレクトリのことです。
+
+たとえば `/repo/packages/app` で Copilot CLI を起動した場合、`/repo/packages/` が中間ディレクトリになります。
+
+```
+/repo/                      ← リポジトリのルート
+├── .github/instructions/a.instructions.md   … 読まれる
+├── AGENTS.md                                … 読まれる
+└── packages/               ← 中間ディレクトリ
+    ├── .github/instructions/b.instructions.md  … 読まれない
+    ├── AGENTS.md                               … 読まれる
+    └── app/                ← カレントディレクトリ
+        └── .github/instructions/c.instructions.md … 読まれる
+```
+
+`AGENTS.md` などは中間ディレクトリにあっても読まれますが、`.github/instructions/` の中のファイルは読まれません。実際に読み込まれたファイルは `/instructions` コマンドで確認できます。
 
 **個人のファイルについて**
 
-- 非推奨の Local ハーネスは `~/.copilot/` を読みません。個人の指示として、VS Code のユーザープロファイルに保存した指示（Agent Customizations エディタで作成したもの）を使います（[Custom instructions reference](https://code.visualstudio.com/docs/agents/reference/custom-instructions-reference)）。「`~/.copilot/` に置いたのに効かない」ときは、使っているハーネスを確認してください。
-- VS Code の設定 `chat.instructionsFilesLocations` で、指示ファイルを探す場所を追加できます。ただし同じドキュメントには「Prefer native harness folders for portability」とあり、Copilot CLI などのほかのツールはエディタの設定を引き継がないため、ハーネス標準のフォルダに置くことが勧められています。
+- VS Code の設定 `chat.instructionsFilesLocations` で、指示ファイルを探す場所を追加できます。ただし同じドキュメントには「Prefer native harness folders for portability」とあり、Copilot CLI などのほかのツールはエディターの設定を引き継がないため、ハーネス標準のフォルダーに置くことが勧められています。
 - Copilot CLI では、環境変数 `COPILOT_HOME` を設定すると `~/.copilot` の代わりにそのディレクトリが使われます。
 - Copilot CLI では、`COPILOT_CUSTOM_INSTRUCTIONS_DIRS`（カンマ区切り）で、`AGENTS.md` と `*.instructions.md` を探すディレクトリを追加できます。
 - `~/.copilot` 配下のファイルは **Settings Sync では同期されません**（[Custom instructions reference](https://code.visualstudio.com/docs/agents/reference/custom-instructions-reference)）。dotfiles などで自分で管理する必要があります。
@@ -212,7 +232,8 @@ Copilot CLI は、次の場所からこれらのファイルを探します。
 > Copilot CLI combines their instructions ... but does not define a general precedence order between these files. Avoid conflicting instructions.
 > （[Adding custom instructions for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions)）
 
-VS Code のドキュメントにも「Don't rely on a universal precedence order.」とあります。**「個人設定がプロジェクト設定を上書きする」といった動作はない**ので、矛盾するルールを書かないことが前提です。
+VS Code のドキュメントにも「Don't rely on a universal precedence order.」とあります。
+**「個人設定がプロジェクト設定を上書きする」といった動作はない**ので、矛盾するルールを書かないことが前提です。
 
 ### `*.instructions.md` の書き方
 
@@ -231,7 +252,7 @@ applyTo: "**/*.ts,**/*.tsx"
 |---|---|
 | `applyTo` | カンマ区切りの glob。**ワークスペースルートからの相対パス**です（`*.py` はルート直下だけに一致し、`**/*.py` なら全階層に一致）。デフォルト値はありません |
 | `name` | UI での表示名（省略時はファイル名） |
-| `description` | Local ハーネスで、必要に応じて読み込むかの判断に使われます |
+| `description` | ファイルの説明。<br>Copilot ハーネスでの使われ方はドキュメントに記載がありません。筆者が試したところ、`applyTo` を書かずに `description` だけを書いたファイルは読み込まれませんでした |
 | `excludeAgent` | `"code-review"` または `"cloud-agent"` を指定すると、その機能では使われなくなります（CLI のドキュメントに記載） |
 
 補足：`.github/copilot-instructions.md`、`AGENTS.md`、`CLAUDE.md` では、`@relative/path` と書くと別ファイルを取り込めます。ただし絶対パスと `~/` で始まるパスは読み込まれません。`*.instructions.md` と `GEMINI.md` では展開されません（Copilot CLI のドキュメントに記載）。
@@ -245,7 +266,8 @@ applyTo: "**/*.ts,**/*.tsx"
 
 ## 3. Skills（SKILL.md）
 
-特定の作業の手順を書いておき、必要なときだけ読ませる仕組みです。1 スキル 1 ディレクトリで、中に `SKILL.md` と補助ファイルを置きます。
+特定の作業の手順を書いておき、必要なときだけ読ませる仕組みです。
+1 スキル 1 ディレクトリで、中に `SKILL.md` と補助ファイルを置きます。
 
 ### スキルの読み込みは 3 段階
 
@@ -272,7 +294,7 @@ VS Code のドキュメントでは、スキルは次の 3 段階で読み込ま
 
 出典：[Use Agent Skills in VS Code](https://code.visualstudio.com/docs/agent-customization/agent-skills)、[Adding agent skills for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills)、[About agent skills](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills)
 
-※ VS Code のドキュメントの表は、ハーネスごとに対応する場所を 1 つずつ示したもので、「認識するディレクトリのすべてではない」と書かれています。Local ハーネスは `.claude/skills/`、`.agents/skills/`、`~/.claude/skills/`、`~/.agents/skills/` も読みます。Copilot ハーネスがこれらを読むかどうかは明記されていないので、**確実に読ませたいなら `.github/skills/` と `~/.copilot/skills/` に置く**のが無難です。
+※ VS Code のドキュメントの表は、ハーネスごとに対応する場所を 1 つずつ示したもので、「認識するディレクトリのすべてではない」と書かれています。Copilot ハーネスが `.claude/skills/`、`.agents/skills/`、`~/.claude/skills/`、`~/.agents/skills/` を読むかどうかは明記されていないので、**確実に読ませたいなら `.github/skills/` と `~/.copilot/skills/` に置く**のが無難です。
 
 ### ディレクトリ構成の例
 
@@ -309,6 +331,8 @@ VS Code のドキュメントでは、スキルは次の 3 段階で読み込ま
 
 ### SKILL.md の書き方
 
+#### 基本の形（frontmatter）
+
 ```markdown
 ---
 name: webapp-testing
@@ -330,31 +354,17 @@ argument-hint: "[test file] [options]"
 | `argument-hint` | | `/` コマンドで使うときの入力ヒント（VS Code） |
 | `user-invocable` | | `false` にすると `/` メニューに表示されません（自動読み込みはされます）。VS Code |
 | `disable-model-invocation` | | `true` にすると `/` コマンドからだけ実行されます。VS Code |
-| `context` | | `fork` にするとサブエージェントで実行されます（実験的機能）。VS Code |
 | `allowed-tools` | | 確認なしで使ってよいツール（例：`shell`）。Copilot CLI |
 | `license` | | ライセンス。Copilot CLI |
 
 `allowed-tools` について、GitHub のドキュメントは、`shell` や `bash` を事前許可するのは**中身を確認して信頼できるスキルだけ**にするよう警告しています。
 
-### スキルをサブエージェントで実行する
+#### 人向けの手順書とSKILL.mdの本質的な違い
 
-サブエージェントは、メインのチャットとは**別のコンテキスト**で作業し、**結果だけ**をメインのエージェントに返す仕組みです。多くのファイルを読む調査などに使うと、メインのチャットのコンテキストを汚しません（[Use subagents](https://code.visualstudio.com/docs/agents/run/subagents)）。
-
-スキルをサブエージェントで実行する方法は 2 つあります。
-
-| 方法 | 設定のしかた | 使えるハーネス |
-|---|---|---|
-| `context: fork` | SKILL.md の frontmatter に `context: fork` と書く。VS Code の設定 `github.copilot.chat.skillTool.enabled` を有効にする必要がある（実験的機能） | Copilot（ドキュメントに別の記載がないため） |
-| プロンプトでサブエージェントに任せる | 「サブエージェントを使って、認証まわりを調査して」のように、普通の言葉で依頼する | Copilot：`task` ツールが使われる（ツール名を書く必要はない）<br>Local（非推奨）：**Configure Tools** で **Run Subagent**（`agent/runSubagent`）を有効にしてから依頼する |
-
-- `context: fork` は、スキルが呼ばれると**必ず**サブエージェントで実行されます。「In a forked context, the skill executes in a dedicated subagent and only its final result is returned to the parent agent.」（[Use Agent Skills in VS Code](https://code.visualstudio.com/docs/agent-customization/agent-skills)）
-- プロンプトで依頼する方法は、その都度サブエージェントに任せるかを指示する方法です。
-- `runSubagent` は Local ハーネスのツールです。「Copilot uses its native `task` tool rather than Local's `runSubagent`.」（[Use subagents](https://code.visualstudio.com/docs/agents/run/subagents)）。Local ハーネスは 2027年2月に削除される予定なので、これから作るなら Copilot ハーネスの方法を使います。
-- サブエージェントは自分でもモデルを呼び出します。そのため、メインのコンテキストが小さくなっても、全体の利用量やコストが減るとは限りません（"a smaller main context doesn't necessarily mean lower total usage or cost."）。
-
-### SKILL.md に書かないこと
-
-「人向けの手順書があるので、それをそのままスキルにすればよい」と考えがちです。でも、人向けの手順書と SKILL.md は、読み手が違います。人向けの手順書は**前提知識がない人**に向けて、背景や用語の説明を丁寧に書きます。SKILL.md の読み手は、**一般的な知識をすでに持っていて、リポジトリのコードも自分で読める AI** です。
+「人向けの手順書があるので、それをそのままスキルにすればよい」と考えがちです。
+でも、人向けの手順書と SKILL.md は、読み手が違います。
+人向けの手順書は**前提知識がない人**に向けて、背景や用語の説明を丁寧に書きます。
+SKILL.md の読み手は、**一般的な知識をすでに持っていて、リポジトリのコードも自分で読める AI** です。
 
 Anthropic のスキル作成ガイドは、次の前提で書くよう勧めています。
 
@@ -362,18 +372,18 @@ Anthropic のスキル作成ガイドは、次の前提で書くよう勧めて�
 > Only add context Claude doesn't already have.
 > （[Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)）
 
-#### 書かないもの
+#### SKILL.mdに書かないこと
 
 | 書かないもの | 理由（出典） |
 |---|---|
 | 一般的な知識の説明（PDF とは何か、HTTP の仕組みなど） | 「You don't need to explain what a PDF is, how HTTP works, or what a database migration does.」（[Agent Skills best practices](https://agentskills.io/skill-creation/best-practices)） |
-| コードを読めばわかること（ディレクトリ構成、使っているライブラリなど） | 「Only write down what Claude can't find by reading the repo」「The `CLAUDE.md` rule applies to skills too」（[Best practices for Claude Code](https://code.claude.com/docs/en/best-practices)） |
+| コードを読めばすぐわかること（使っているライブラリなど） | 「Only write down what Claude can't find by reading the repo」「The `CLAUDE.md` rule applies to skills too」（[Best practices for Claude Code](https://code.claude.com/docs/en/best-practices)） |
 | 「エラーを適切に処理する」のような一般論 | 一般論ではなく、プロジェクト固有の手順やつまずきやすい点を書くべきとされています（[Agent Skills best practices](https://agentskills.io/skill-creation/best-practices)） |
 | あらゆる例外ケースの網羅 | 「Overly comprehensive skills can hurt more than they help」「Concise, stepwise guidance with a working example tends to outperform exhaustive documentation.」（同上） |
 | 選択肢の列挙（「A でも B でも C でもよい」） | 「Provide defaults, not menus」。基本の方法を 1 つ決めて、例外のときだけ別の方法を書きます（同上） |
 | 「2025年8月より前なら〜」のような、時期で変わる情報 | 「Don't include information that will become outdated」。古い方法は「旧方式」として分けます（[Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)） |
 
-#### 書くもの
+#### SKILL.mdに書くこと
 
 **AI がスキルなしでは知り得ないこと**だけを書きます。
 
@@ -385,12 +395,18 @@ Anthropic のスキル作成ガイドは、次の前提で書くよう勧めて�
 - チームで決めたこと（会議で決まった方針など）
 - 特定の人の頭の中にしかない手順（デプロイの手順など）
 - AI が実際に間違えたことへの具体的な注意（「ユーザー ID は DB では `user_id`、認証サービスでは `uid`」など）
+- 毎回探し直すのに時間がかかること（大きなリポジトリで、どこに何があるかなど）。「or what it would otherwise spend time rediscovering every session」（[Best practices for Claude Code](https://code.claude.com/docs/en/best-practices)）。量が多いときは別のファイルに分けて、いつ読むかを書いて SKILL.md からリンクします（"The key is telling the agent *when* to load each file."、[Agent Skills best practices](https://agentskills.io/skill-creation/best-practices)）
+- コードを読むと誤解しやすい場所（使われていないように見えて実は使われているディレクトリなど）。「a directory that looks unused but isn't」（[Best practices for Claude Code](https://code.claude.com/docs/en/best-practices)）
 
-#### 例：人向けの書き方と SKILL.md の書き方
+> ディレクトリ構成のように、コードから機械的に作れる情報は、手で書くとコードが変わったときに古くなります。
+> 筆者は、こうした情報は**スクリプトで作り直せるようにする**のがよいと考えています。
+> コードから一覧を作るのは毎回同じ結果になる処理なので、AI に任せるよりスクリプトのほうが向いています（スクリプトの置き方は [6章](#6-長い手順がある場合の実装のしかた)）。
+
+#### 例：人向けの手順書の書き方と SKILL.md の書き方
 
 両方のガイドに、PDF の文字を抜き出す手順で同じような例が載っています。
 
-**人向け（冗長）**
+**人向けの手順書（冗長）**
 
 ```markdown
 PDF（Portable Document Format）は、テキストや画像などを含む一般的なファイル形式です。
@@ -417,13 +433,32 @@ with pdfplumber.open("file.pdf") as pdf:
 
 書いた内容は、1 行ずつ次の問いで確認します。
 
-- 「この指示がなかったら、AI は間違えるか？」答えが「いいえ」なら削ります（"Would the agent get this wrong without this instruction?" If the answer is no, cut it.）
+- 「この指示がなかったら、AI は間違えるか？」答えが「いいえ」なら削ります。わからなければ試して確かめます（"Would the agent get this wrong without this instruction?" If the answer is no, cut it. If you're unsure, test it.）
 - 「AI はこれをコードを読んで知ることができるか？ 実際に読みに行くか？」両方「はい」なら削ります（"Could it find this by reading the code?" "Would it actually go and look?"）
 - 「この説明は、トークンを使う価値があるか？」（"Does this paragraph justify its token cost?"）
 
+図にすると、次のようになります。
+
+```mermaid
+flowchart TD
+    A[書いた 1 行] --> Q1{この指示がなかったら、<br>AI は間違えるか？}
+    Q1 -- いいえ --> CUT[削る]
+    Q1 -- わからない --> TEST[スキルなしで試して確かめる] --> Q1
+    Q1 -- はい --> Q2{AI はコードを読んで<br>これを知ることができるか？}
+    Q2 -- いいえ --> Q3
+    Q2 -- はい --> Q2b{実際に読みに行くか？}
+    Q2b -- はい --> CUT
+    Q2b -- いいえ --> Q3{トークンを使う価値があるか？}
+    Q3 -- いいえ --> CUT
+    Q3 -- はい --> KEEP[残す]
+```
+
+> 図の問いの順番と、3 つ目の問いで「いいえ」なら削るという判断は、筆者が補ったものです。
+> 元のドキュメントでは、3 つの問いは別々に挙げられています。
+
 #### 人向けの手順書からスキルを作るなら
 
-1. **まずスキルなしで AI に作業させて、どこで間違えるかを見ます。** Anthropic のガイドは、長い資料を書く前に評価用のシナリオを作るよう勧めています（"Create evaluations BEFORE writing extensive documentation."）
+1. **まずスキルなしで AI に作業させて、どこで間違えるかを見ます。**<br>Anthropic のガイドは、長い資料を書く前に評価用のシナリオを作るよう勧めています（"Create evaluations BEFORE writing extensive documentation."）
 2. 手順書のうち、**AI が間違えた部分とプロジェクト固有の部分だけ**を SKILL.md に残します。
 3. コマンドの順番や引数が決まっている部分は、`scripts/` にスクリプトとして置きます（[6章](#6-長い手順がある場合の実装のしかた)）。
 4. 実際の作業で使い、間違えたところを足していきます。
@@ -436,10 +471,11 @@ with pdfplumber.open("file.pdf") as pdf:
 
 | 方法 | 人がすること | スキルが使われるかどうか |
 |---|---|---|
-| **人が名前を指定して呼ぶ** | チャットで `/スキル名` と入力する（例：`/webapp-testing`） | 必ず使われる |
+| **人がスキル名を指定して呼ぶ** | チャットで `/スキル名` と入力する（例：`/webapp-testing`） | 必ず使われる |
 | **AI に任せる** | スキル名は書かず、普通に依頼する（例：「テストを実行して、失敗したら原因を調べて」） | AI が、依頼の内容とスキルの `description` を見比べて、関係があると判断したときだけ使われる |
 
-「AI に任せる」場合は、関係のある依頼でも**必ず選ばれるとは限りません**。確実に使わせたい作業は、`/スキル名` で呼びます。
+「AI に任せる」場合は、関係のある依頼でも**必ず選ばれるとは限りません**。
+確実に使わせたい作業は、`/スキル名` で呼びます。
 
 **VS Code**
 
@@ -456,13 +492,14 @@ frontmatter の設定で、どちらの方法で使えるかを変えられま�
 /webapp-testing 認証まわりの変更分だけ
 ```
 
-のように、`/スキル名` の後ろに追加の指示を書けます。ドキュメントには、Discovery の段階で検出されても**関連するリクエストのたびに必ず選ばれるわけではない**、とも書かれています（[Use Agent Skills in VS Code](https://code.visualstudio.com/docs/agent-customization/agent-skills)）。
+のように、`/スキル名` の後ろに追加の指示を書けます。
+ドキュメントには、Discovery の段階で検出されても**関連するリクエストのたびに必ず選ばれるわけではない**、とも書かれています（[Use Agent Skills in VS Code](https://code.visualstudio.com/docs/agent-customization/agent-skills)）。
 
 作成と確認は **`Chat: Open Customizations`** の **Skills** タブで行えます。**New Skill** を使うと、選択中のハーネスに合った保存場所が提示されます。
 
 **Copilot CLI**
 
-- **人が名前を指定して呼ぶ**：プロンプトの中で `/スキル名` と書きます
+- **人がスキル名を指定して呼ぶ**：プロンプトの中で `/スキル名` と書きます
 - **AI に任せる**：スキル名は書かずに依頼すると、プロンプトとスキルの `description` から Copilot が判断します
 
 ```
@@ -488,6 +525,16 @@ copilot skill enable <name>
 ```
 
 出典：[Adding agent skills for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills)
+
+### スキルをサブエージェントで実行する
+
+サブエージェントは、メインのチャットとは**別のコンテキスト**で作業し、**結果だけ**をメインのエージェントに返す仕組みです。多くのファイルを読む調査などに使うと、メインのチャットのコンテキストを汚しません（[Use subagents](https://code.visualstudio.com/docs/agents/run/subagents)）。
+
+スキルをサブエージェントで実行するには、「サブエージェントを使って、認証まわりを調査して」のように、**普通の言葉で依頼**します。
+
+- Copilot ハーネスでは `task` ツールが使われます。ツール名を書く必要はありません。
+- サブエージェントは自分でもモデルを呼び出します。そのため、メインのコンテキストが小さくなっても、全体の利用量やコストが減るとは限りません（"a smaller main context doesn't necessarily mean lower total usage or cost."）。
+- カスタムエージェントとスキルを組み合わせる方法は、[5章](#スキルとエージェントの関係)で説明します。
 
 ### 公開されているスキルを使う：`gh skill`
 
@@ -539,7 +586,7 @@ gh skill install github/awesome-copilot git-commit --dir ./my-skills
 
 - **書く内容の例**：プロジェクトの概要、ビルド・テストのコマンド、コードスタイル、テストの手順、セキュリティ上の注意など（同サイトの「Popular choices」）
 - **必須の項目はありません**。普通の Markdown で、見出しも自由です（同サイトの FAQ）
-- **ネストできます**。サブディレクトリにも置けて、編集しているファイルに一番近い `AGENTS.md` が優先されます（同サイトの FAQ：「The closest AGENTS.md to the edited file wins」）
+- **ネストできます**。サブディレクトリにも置けて、編集しているファイルに一番近い `AGENTS.md` が優先されます（同サイトの FAQ：「The closest AGENTS.md to the edited file wins」）。ただし Copilot CLI のドキュメントは、指示ファイル同士の優先順位は決めていないと説明しています（[2章](#優先順位はない)）
 
 ### 形式は共通でも、読み込み方はハーネスごとに違う
 
@@ -553,16 +600,15 @@ VS Code のドキュメントには、次のように書かれています。
 | VS Code：Copilot ハーネス | 読む。リポジトリのルート、作業ディレクトリ、その間のディレクトリ、作業中のファイルまでのパスにあるものを探す | [Custom instructions reference](https://code.visualstudio.com/docs/agents/reference/custom-instructions-reference) |
 | VS Code：Codex ハーネス | 読む。プロジェクトのルートからセッションの作業ディレクトリまでの `AGENTS.md` をつなげて使う | 同上 |
 | VS Code：Claude ハーネス | 表に `AGENTS.md` の記載はなく、Claude 側のドキュメントを参照するよう書かれている | 同上 |
-| VS Code：Local ハーネス（非推奨） | `chat.useAgentsMdFile` がオンのとき、ルートの `AGENTS.md` を読む。ネストしたものは `chat.useNestedAgentsMdFiles`（実験的機能、デフォルトはオフ）も必要 | 同上 |
 | Copilot CLI | 読む。リポジトリのルート、作業ディレクトリ、その間、作業中のファイルまでのパスにあるものを探す。`COPILOT_CUSTOM_INSTRUCTIONS_DIRS` で探す場所を追加できる | [Adding custom instructions for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions) |
-| Claude Code（参考） | v2.1.277 以降で読む。ただしデフォルトでは、**作業ディレクトリかその上に `CLAUDE.md`（`.claude/CLAUDE.md`、`CLAUDE.local.md` も含む）がないときだけ**読む | [Manage Claude's memory](https://code.claude.com/docs/en/memory) |
+| Claude Code（参考） | v2.1.277 以降で読む。ただしデフォルトでは、**作業ディレクトリかその上に `CLAUDE.md`（`.claude/CLAUDE.md`、`CLAUDE.local.md` も含む）がないときだけ**読む | [How Claude remembers your project](https://code.claude.com/docs/en/memory) |
 
-Claude Code のドキュメントでは、`AGENTS.md` が直接読まれない環境でも、`CLAUDE.md` に `@AGENTS.md` と書いて取り込めば、全ツールで 1 つのファイルを共有できると説明されています（[Manage Claude's memory](https://code.claude.com/docs/en/memory)）。
+Claude Code のドキュメントでは、`AGENTS.md` が直接読まれない環境でも、`CLAUDE.md` に `@AGENTS.md` と書いて取り込めば、全ツールで 1 つのファイルを共有できると説明されています（[How Claude remembers your project](https://code.claude.com/docs/en/memory)）。
 
 ### Copilot 以外のエージェントも使うなら
 
 - Copilot と Codex など、複数のエージェントを併用するチームでは、共通のルールを `AGENTS.md` に書くと、ファイルを重複して持たずに済みます
-- Copilot CLI は `.github/copilot-instructions.md` と `AGENTS.md` の**両方を読んで組み合わせます**。優先順位はないので、同じ内容を両方に書いたり、矛盾する内容を書いたりしないようにします（[Adding custom instructions for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions)）
+- Copilot CLI は `.github/copilot-instructions.md` と `AGENTS.md` の**両方を読んで組み合わせます**。<br>優先順位はないので、同じ内容を両方に書いたり、矛盾する内容を書いたりしないようにします（[Adding custom instructions for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions)）
 - 名前が似ていますが、`AGENTS.md` は**カスタムエージェントの定義ファイルではありません**（上の VS Code ドキュメントの引用のとおり）。カスタムエージェントは次の章の `*.agent.md` です
 
 ---
@@ -582,18 +628,17 @@ GitHub のドキュメントでは、カスタムエージェントは「専門�
 
 ### 置き場所
 
-| 場所 | VS Code | Copilot CLI |
+| 場所 | VS Code（Copilot ハーネス） | Copilot CLI |
 |---|---|---|
 | `.github/agents/*.agent.md` | ✅ | ✅ |
-| `.claude/agents/*.md` | ✅（Claude 形式） | ✅ |
-| `~/.copilot/agents/*.agent.md` | ✅（Copilot ハーネス） | ✅ |
-| `~/.claude/agents/*.md` | ✅（Claude 形式） | 記載なし |
+| `.claude/agents/*.md` | ―（Claude ハーネス用。Claude 形式） | ✅ |
+| `~/.copilot/agents/*.agent.md` | ✅ | ✅ |
+| `~/.claude/agents/*.md` | ―（Claude ハーネス用。Claude 形式） | 記載なし |
 | Organization / Enterprise の `.github` または `.github-private` リポジトリの `agents/` | ✅（自動で検出） | ✅（優先度は最も低い） |
 
 出典：[Custom agent file reference](https://code.visualstudio.com/docs/agents/reference/custom-agent-file-reference)、[GitHub Copilot CLI command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference)、[Creating custom agents for Copilot cloud agent](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/create-custom-agents)
 
-- Copilot CLI では、ファイル名（`.md` / `.agent.md` を除いた部分）がエージェントの ID になります。**同じ ID のエージェントがあると、個人（`~/.copilot/agents/`）のものが使われます**（[Creating and using custom agents for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/create-custom-agents-for-cli)）
-- VS Code の Local ハーネスは、ユーザー単位のカスタムエージェントを `~/.copilot/agents` ではなく VS Code のプロファイルに保存します（[Custom agent file reference](https://code.visualstudio.com/docs/agents/reference/custom-agent-file-reference)）
+- Copilot CLI では、ファイル名（`.md` / `.agent.md` を除いた部分）がエージェントの ID になります。<br>**同じ ID のエージェントがあると、個人（`~/.copilot/agents/`）のものが使われます**（[Creating and using custom agents for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/create-custom-agents-for-cli)）
 
 ### `*.agent.md` の書き方
 
@@ -625,21 +670,24 @@ tools: ["read", "search"]
 出典：[Custom agents configuration](https://docs.github.com/en/copilot/reference/custom-agents-configuration)、[Custom agent file reference](https://code.visualstudio.com/docs/agents/reference/custom-agent-file-reference)
 
 - 本文（frontmatter より下）は**最大 30,000 文字**です（[Custom agents configuration](https://docs.github.com/en/copilot/reference/custom-agents-configuration)）
-- `handoffs`（応答後に別のエージェントへ切り替える提案）は **Local ハーネスだけ**で使えます。Copilot ハーネスと GitHub.com では使えません（[Custom agent file reference](https://code.visualstudio.com/docs/agents/reference/custom-agent-file-reference)、[Custom agents configuration](https://docs.github.com/en/copilot/reference/custom-agents-configuration)）
+- `handoffs`（応答後に別のエージェントへ切り替える提案）は、**Copilot ハーネスと GitHub.com では使えません**（[Custom agent file reference](https://code.visualstudio.com/docs/agents/reference/custom-agent-file-reference)、[Custom agents configuration](https://docs.github.com/en/copilot/reference/custom-agents-configuration)）
 - 使えるフィールドやツール名はハーネスによって違います（[7章](#7-ハーネスについて)）
 
-### カスタム指示との関係
+### カスタムエージェントとカスタム指示との関係
 
 > In the Copilot harness, the agent's instructions are added to your custom instructions and take precedence if they conflict.
 > （[Custom agents in VS Code](https://code.visualstudio.com/docs/agent-customization/custom-agents)）
 
 Copilot ハーネスでは、カスタムエージェントの指示は `copilot-instructions.md` などに**追加**され、矛盾した場合はエージェント側が優先されます。
 
-一方 Copilot CLI では、カスタムエージェントが**サブエージェントとして実行されたときは、リポジトリのカスタム指示を受け取りません**。受け取らせたい場合は `include-custom-instructions: true` を指定します。`/agent` や `--agent` でユーザーが選んだ場合は受け取ります（[Creating and using custom agents for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/create-custom-agents-for-cli)）。
+一方 Copilot CLI では、カスタムエージェントが**サブエージェントとして実行されたときは、リポジトリのカスタム指示を受け取りません**。
+受け取らせたい場合は `include-custom-instructions: true` を指定します。`/agent` や `--agent` でユーザーが選んだ場合は受け取ります（[Creating and using custom agents for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/create-custom-agents-for-cli)）。
 
-### 呼び出し方
+### カスタムエージェントの呼び出し方
 
-**VS Code**：**Session Target** でハーネスを選び、**Agent** のドロップダウンからカスタムエージェントを選びます。別のエージェントに切り替えるまで選ばれたままです。ほかのエージェントからサブエージェントとして呼ばれることもあります。作成は `Chat: Open Customizations` の Agents タブ、または **`Chat: New Custom Agent`** から行えます（[Custom agents in VS Code](https://code.visualstudio.com/docs/agent-customization/custom-agents)）。
+**VS Code**：**Session Target** でハーネスを選び、**Agent** のドロップダウンからカスタムエージェントを選びます。
+別のエージェントに切り替えるまで選ばれたままです。
+ほかのエージェントからサブエージェントとして呼ばれることもあります。作成は `Chat: Open Customizations` の Agents タブ、または **`Chat: New Custom Agent`** から行えます（[Custom agents in VS Code](https://code.visualstudio.com/docs/agent-customization/custom-agents)）。
 
 **Copilot CLI**（[Creating and using custom agents for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/create-custom-agents-for-cli)）
 
@@ -652,6 +700,93 @@ Copilot ハーネスでは、カスタムエージェントの指示は `copilot
 
 新しく作ったエージェントは、CLI を再起動すると読み込まれます。
 
+### スキルとカスタムエージェントの違い
+
+| | スキル（`SKILL.md`） | カスタムエージェント（`*.agent.md`） |
+|---|---|---|
+| 定義するもの | **作業の手順**（参照ファイルやスクリプトも付けられる） | **役割**（指示・使えるツール・モデル） |
+| 人が使う方法 | `/スキル名` と入力する | 選ぶ（VS Code は Agent ドロップダウン、CLI は `/agent` か `--agent`） |
+| AI が使う方法 | `description` を見て、関係があると判断したら読み込む | サブエージェントとして呼ぶ |
+| コンテキストに入っている期間 | 使われたときだけ | 選んでいる間ずっと |
+| ツール・モデルの制御 | できない（CLI の `allowed-tools` は、確認なしで使ってよいツールを決めるだけ） | `tools`・`model` で決められる |
+
+迷ったときは「**手順ならスキル、役割ならエージェント**」で考えます。
+
+- VS Code のドキュメントは、補助スクリプトやリソースを伴う再利用可能な作業手順にはスキルを検討するよう書いています（"For reusable workflows with supporting scripts or resources, consider an agent skill."、[Custom agents in VS Code](https://code.visualstudio.com/docs/agent-customization/custom-agents)）
+- カスタムエージェントは「繰り返し出てくる役割が、専用の指示・ツール・出力形式を必要とするとき」に作ります（[1章](#指示書の種類)）
+
+| こうしたい | 使うもの |
+|---|---|
+| E2E テストの実行手順を、必要なときだけ読ませたい | スキル |
+| レビュー担当には編集ツールを持たせたくない | エージェント（`tools` で制限） |
+| 計画を立てるときだけ別のモデルを使いたい | エージェント（`model` を指定） |
+| レビュー担当に、毎回同じチェックリストを使わせたい | 両方（次の節の「エージェントがスキルを読み込む」） |
+
+### スキルとエージェントの関係
+
+スキルとエージェントは、組み合わせて使えます。
+向きは 2 つあります。
+
+| | ① エージェントがスキルを読み込む | ② スキルをサブエージェントで実行するよう指示する |
+|---|---|---|
+| やり方 | `*.agent.md` の `skills` に書く | プロンプトで「サブエージェントを使って、〇〇スキルで△△して」と頼む |
+| 主役 | エージェント（役割）。スキルは手順書として使う | スキル（作業）。サブエージェントは実行する場所 |
+| 向いている場面 | 役割ごとに決まった手順やチェックリストを持たせたい | 多くのファイルを読む調査など、途中経過をメインの会話に残したくない作業 |
+| VS Code（Copilot ハーネス） | ✅ | サブエージェントへの依頼は ✅。スキルを任せる例は記載なし |
+| Copilot CLI | 記載なし | サブエージェントへの依頼は ✅。スキルを任せる例は記載なし |
+
+#### ① エージェントがスキルを読み込む（`skills`）
+
+VS Code の Copilot ハーネスでは、`*.agent.md` の `skills` に書いたスキルが、エージェントのコンテキストに読み込まれます（"Names of skills to load into the agent's context in Copilot."、[Custom agent file reference](https://code.visualstudio.com/docs/agents/reference/custom-agent-file-reference)）。
+
+```markdown
+---
+name: reviewer
+description: コードレビューを行う。変更差分のレビューを頼まれたときに使う。
+tools: ["read", "search"]
+skills: ['code-review-checklist']
+---
+
+あなたはコードレビュー担当です。code-review-checklist スキルの観点で、指摘だけを返してください。
+```
+
+- 書くスキルは、使っている Copilot ハーネスで有効になっているものにします
+- ドキュメントには、次のことは書かれていません
+  - `skills` を書かないエージェントでも、スキルが自動で使われるか
+  - `skills` が「先に読み込む」だけなのか、「書いたスキルしか使わせない」のか
+- エディターで警告が出ないことは、実際に使えることの保証にはなりません（"Editor feedback doesn't replace checking which tools and skills the running agent can use."）。実際に動かして確認してください
+
+#### ② スキルをサブエージェントで実行するよう指示する
+
+サブエージェントは、プロンプトで**普通の言葉で頼めば**使われます（[3章](#スキルをサブエージェントで実行する)）。スキルの手順をサブエージェントにやらせたいときも、同じように頼みます。
+
+```
+サブエージェントを使って、webapp-testing スキルの手順で認証まわりのテストを実行して、結果だけ報告して
+```
+
+```
+reviewer サブエージェントで、code-review-checklist スキルを使って今回の差分をレビューして
+```
+
+ドキュメントに書かれているのは、次の 2 つです。
+
+- 作業をサブエージェントに任せる：「Use a subagent to investigate authentication in this project.」（Copilot ハーネス）。`task` ツールの名前を書く必要はありません（"you don't need to construct a `task` tool call yourself."）
+- カスタムエージェントをサブエージェントとして使う：「Use the Codebase Researcher subagent to explain how authentication works…」
+
+出典：[Use subagents](https://code.visualstudio.com/docs/agents/run/subagents)。Copilot CLI でも、プロンプトで頼む方法が書かれています（[カスタムエージェントの呼び出し方](#カスタムエージェントの呼び出し方)）。
+
+- 「**スキルを**サブエージェントで実行して」と頼む例は、どのドキュメントにもありません。上の例は、2 つの書き方を組み合わせたものです
+- サブエージェントは、メインの会話の履歴を受け取りません（"Local subagents receive the delegated task and applicable instructions, not the main conversation history."）。この記述は、非推奨の Local ハーネス（2027年2月に削除予定）についてのものです。Copilot ハーネスについては書かれていないので、必要な情報はプロンプトに書いておくのが無難です
+- 「AI に任せる」場合と同じく、頼んだスキルが必ず使われるとは限りません。結果を見て確認してください
+
+#### Copilot CLI で①を使う場合
+
+Copilot CLI のドキュメントには、①（エージェントがスキルを読み込む）の方法は書かれていません。
+カスタムエージェントの frontmatter に `skills` フィールドもありません（[GitHub Copilot CLI command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference)）。
+
+CLI には、スキルを呼び出す `skill` というツールがあります（"Invoke custom skills"）。
+エージェントの `tools` を絞ると、このツールが外れてスキルを使えなくなる可能性がありますが、ドキュメントには書かれていません（筆者の推測です）。
+
 ---
 
 ## 6. 長い手順がある場合の実装のしかた
@@ -660,7 +795,7 @@ Copilot ハーネスでは、カスタムエージェントの指示は `copilot
 
 ### 公式ドキュメントに書かれていること
 
-- **長い指示書は見落とされやすい**：GitHub のコードレビュー向けチュートリアルには、「Very long instruction files may result in some instructions being overlooked.」とあり、1 つの指示ファイルは**約 1,000 行まで**にするよう勧められています（[Customizing Copilot code review](https://docs.github.com/en/copilot/tutorials/customize-code-review)）
+- **長い指示書は見落とされやすい**：GitHub の Copilot コードレビュー向けチュートリアルには、「Very long instruction files may result in some instructions being overlooked.」とあり、1 つの指示ファイルは**約 1,000 行まで**にするよう勧められています。これはコードレビューについての記述で、チャットで何行までかは書かれていません（[Customizing Copilot code review](https://docs.github.com/en/copilot/tutorials/customize-code-review)）
 - **リンクを書くだけでは届かない**：「A link doesn't guarantee that the document's contents reach the model.」（[Use custom instructions in VS Code](https://code.visualstudio.com/docs/copilot/customization/custom-instructions)）
 - **手順はスキルに**：「For a reusable multi-step workflow rather than coding conventions or project context, consider an agent skill.」（同上）
 - **SKILL.md は 500 行まで**：「Keep your main `SKILL.md` under 500 lines. Move detailed reference material to separate files.」（[Agent Skills Specification](https://agentskills.io/specification)）
@@ -671,11 +806,13 @@ Copilot ハーネスでは、カスタムエージェントの指示は `copilot
 ### 実装方法と遵守度
 
 > **遵守度について**
-> 下の表の「遵守度」は、公式の計測データではありません。上に挙げた公式ドキュメントに書かれている**読み込みの仕組み**（いつ・何が AI のコンテキストに入るか）から見た、筆者の評価です。どの方法でも、AI が 100% 従うことは保証されていません。
+> 下の表の「遵守度」は、公式の計測データではありません。
+> 上に挙げた公式ドキュメントに書かれている**読み込みの仕組み**（いつ・何が AI のコンテキストに入るか）から見た、筆者の評価です（生成 AI と検討しました）。
+> どの方法でも、AI が 100% 従うことは保証されていません。
 
 | # | 実装方法 | 手順書が読まれるタイミング | 遵守度 | 理由 | 向いている使い方 |
 |---|---|---|---|---|---|
-| 1 | `copilot-instructions.md` に手順を直接書く | 常に | 短ければ高／長いと低 | 必ずコンテキストに入るが、長くなるほど、ほかの指示とまとめて見落とされやすくなる（約 1,000 行が目安） | 数行で済む、全作業に共通の手順 |
+| 1 | `copilot-instructions.md` に手順を直接書く | 常に | 短ければ高／長いと低 | 必ずコンテキストに入るが、長くなるほど、ほかの指示とまとめて見落とされやすくなる（コードレビューでは約 1,000 行が目安とされている） | 数行で済む、全作業に共通の手順 |
 | 2 | `copilot-instructions.md` から `@path` で取り込む | 常に | #1 と同じ | 中身はコンテキストに入るので #1 と同じ扱い。ファイルが分かれて管理しやすくなるだけで、長さの問題は解決しない | 手順書を別ファイルで管理したいが、常に読ませたい場合 |
 | 3 | 指示書に手順書へのリンクだけを書く | AI が開くと判断したときだけ | 低 | リンクは中身が届くことを保証しない | おすすめしない |
 | 4 | `*.instructions.md`（`applyTo`）に書く | 対象のファイルを扱うとき | ファイル単位のルールなら高／作業手順なら低 | 「どのファイルを触るか」で読み込まれるので、「どの作業をするか」に結びつく手順には合わない | 特定のファイル種別に関わるルール |
@@ -709,10 +846,9 @@ Copilot ハーネスでは、カスタムエージェントの指示は `copilot
 
 ### ハーネスとは
 
-ここまで「Copilot ハーネス」「Local ハーネス」という言葉を使ってきました。**ハーネス**は、モデルを動かす側の仕組みのことで、どのファイルを読み込むか、どのツールを使えるかを決めます。VS Code のドキュメントでは、次のように説明されています。
-
-> The selected agent harness, not the language model, determines instruction support.
-> （[Custom instructions reference](https://code.visualstudio.com/docs/agents/reference/custom-instructions-reference)）
+ここまで「Copilot ハーネス」という言葉を使ってきました。
+**ハーネス**は、モデルを動かす側の仕組みのことで、どのファイルを読み込むか、どのツールを使えるかを決めます。
+冒頭の「読む前に」の節で引用したとおり、指示書の扱いを決めるのはモデルではなくハーネスです。
 
 カスタムエージェントについても、同じ場所に置いたファイルでも、ハーネスが違えば動作も違うと書かれています。
 
@@ -730,10 +866,6 @@ Copilot ハーネスでは、カスタムエージェントの指示は `copilot
 | **Copilot** | 標準。Copilot CLI と同じ探索ルール（`.github/`、`~/.copilot/`） |
 | Anthropic Claude | Claude Code と同じ探索ルール（`CLAUDE.md`、`.claude/`） |
 | OpenAI Codex | Codex と同じ探索ルール（`AGENTS.md`、`.agents/`） |
-| Local（**非推奨**） | 従来の VS Code 独自の探索。`chat.*` 設定で動作を変えられる |
-
-> The Local harness is deprecated and will be removed in February 2027. Move your workflows to the Copilot harness before then.
-> （[Use Agent Skills in VS Code](https://code.visualstudio.com/docs/agent-customization/agent-skills)）
 
 ### ハーネスによって変わるもの
 
@@ -742,26 +874,18 @@ Copilot ハーネスでは、カスタムエージェントの指示は `copilot
 | カスタム指示 | 読むファイルが違う（Copilot は `copilot-instructions.md` と `AGENTS.md`、Claude は `CLAUDE.md`、Codex は `AGENTS.md`） | 2、4 |
 | スキル | 探すディレクトリが違う（`.github/skills/`、`.claude/skills/`、`.agents/skills/`） | 3 |
 | `AGENTS.md` | ネストしたファイルの探し方が違う | 4 |
-| カスタムエージェント | 使えるフィールドやツール名が違う（`handoffs` は Local だけ、など） | 5 |
-| プロンプトファイル | Local ハーネスだけが読む | 1 |
-| サブエージェント | 使うツールが違う（Copilot は `task`、Local は `runSubagent`） | 3 |
-| `chat.*` 設定 | 多くは Local ハーネスだけに効く | 下記 |
+| カスタムエージェント | 使えるフィールドやツール名が違う | 5 |
 
-### Local ハーネス用の設定に注意
+### 探す場所を追加する設定
 
-| 設定 | 状態 | 内容 |
-|---|---|---|
-| `chat.instructionsFilesLocations` | 継続サポート | instructions を探す場所を追加します。ただし **Copilot CLI や Copilot アプリはエディターの設定を引き継がない**ため、標準のフォルダーに置くことが推奨されています |
-| `chat.agentFilesLocations` | 継続サポート | カスタムエージェントを探す場所を追加します。上と同じ理由で、Copilot では標準のフォルダーが推奨されています |
-| `chat.agentSkillsLocations` | **非推奨** | Local ハーネス用に、スキルを探す場所を追加します |
-| `chat.includeApplyingInstructions` | Local 用 | `applyTo` に一致した `.instructions.md` を含めます |
-| `chat.useAgentsMdFile` / `chat.useNestedAgentsMdFiles` | Local 用 | `AGENTS.md` を読み込みます（ネストの探索は実験的機能で、デフォルトはオフ） |
-| `chat.useClaudeMdFile` | Local 用 | `CLAUDE.md` を読み込みます |
-| `chat.useCustomizationsInParentRepositories` | Local 用 | モノレポのサブフォルダーを開いたとき、親リポジトリのカスタマイズを探します |
+VS Code の設定で、指示ファイルやカスタムエージェントを探す場所を追加できます。
 
-出典：[Custom instructions reference](https://code.visualstudio.com/docs/agents/reference/custom-instructions-reference)、[Use Agent Skills in VS Code](https://code.visualstudio.com/docs/agent-customization/agent-skills)、[Custom agent file reference](https://code.visualstudio.com/docs/agents/reference/custom-agent-file-reference)
+| 設定 | 内容 |
+|---|---|
+| `chat.instructionsFilesLocations` | instructions を探す場所を追加します。ただし **Copilot CLI や Copilot アプリはエディターの設定を引き継がない**ため、標準のフォルダーに置くことが推奨されています |
+| `chat.agentFilesLocations` | カスタムエージェントを探す場所を追加します。上と同じ理由で、Copilot では標準のフォルダーが推奨されています |
 
-**以前の記事や解説で紹介されている `chat.*` 設定の多くは、Local ハーネスにしか効きません。** Copilot ハーネスで「設定したのに反映されない」ときは、まずこの点を疑ってください。
+出典：[Custom instructions reference](https://code.visualstudio.com/docs/agents/reference/custom-instructions-reference)、[Custom agent file reference](https://code.visualstudio.com/docs/agents/reference/custom-agent-file-reference)
 
 ---
 
@@ -802,7 +926,6 @@ AGENTS.md                            # 他のエージェントと共有する�
 | スキルが使われない | `description` に「いつ使うか」が書いてあるか。確実に使わせたいなら `/スキル名` で呼ぶ |
 | スキルの補助ファイルが使われない | `SKILL.md` の本文からリンクしているか、「いつ読むか」を書いているか |
 | 長い指示書の一部が守られない | 指示書が長すぎないか。手順はスキルに分ける（[6章](#6-長い手順がある場合の実装のしかた)） |
-| VS Code で設定を変えても反映されない | そのセッションのハーネスが Local 以外ではないか（`chat.*` 設定の多くは Local 専用） |
 | CLI でルールの変更が反映されない | 実行中のセッションには反映されません。`/new` するか、終了して `copilot --continue` で再開します |
 | CLI のサブエージェントがリポジトリのルールを守らない | カスタムエージェントに `include-custom-instructions: true` を指定しているか |
 | 個人ルールとリポジトリのルールが食い違う | 優先順位の決まりはありません。矛盾しないように書き直します |
@@ -830,7 +953,7 @@ AGENTS.md                            # 他のエージェントと共有する�
 
 **AGENTS.md**
 - [AGENTS.md](https://agents.md/)
-- [Manage Claude's memory (Claude Code)](https://code.claude.com/docs/en/memory)
+- Claude Code での扱いは、下の「Claude Code（Anthropic）」にある How Claude remembers your project を参照
 
 **カスタムエージェント**
 - [Custom agents in VS Code](https://code.visualstudio.com/docs/agent-customization/custom-agents)
