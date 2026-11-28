@@ -7,11 +7,13 @@ tags:
   - GitHubCopilot
   - AgentSkills
 private: false
-updated_at: ''
-id: null
+updated_at: '2026-11-28T15:18:47+09:00'
+id: aab5bcd6a413c9e3fd89
 organization_url_name: null
 slide: false
 ignorePublish: false
+posting_campaign_uuid: null
+agreed_posting_campaign_term: false
 ---
 
 # AIエージェントのスキルはどう分ける？工程ごとの汎用スキルと、作業ごとの定型スキル
