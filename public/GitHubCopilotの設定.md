@@ -1,7 +1,7 @@
 ---
 title: >-
-  GitHub Copilot のカスタム指示・スキル・AGENTS.md・カスタムエージェントの使い分け（VS Code /
-  Copilot CLI）2026年11月版
+  GitHub Copilot のカスタム指示・スキル・AGENTS.md・カスタムエージェントの使い分け（VS Code / Copilot
+  CLI）2026年11月版
 tags:
   - VSCode
   - GitHubCopilot
@@ -9,7 +9,7 @@ tags:
   - AI
   - AIエージェント
 private: false
-updated_at: '2026-11-23T19:15:17+09:00'
+updated_at: '2026-11-28T11:48:09+09:00'
 id: aa0b87bdf13e2219d6c1
 organization_url_name: null
 slide: false
