@@ -7,7 +7,7 @@ tags:
   - GitHubCopilot
   - AgentSkills
 private: false
-updated_at: '2026-11-28T15:18:47+09:00'
+updated_at: '2026-11-28T15:23:11+09:00'
 id: 87d54f106112d3a4a7d6
 organization_url_name: null
 slide: false
